@@ -1,0 +1,261 @@
+<h2 class="sr-only">Daily news reader with text selection, highlighting, comment notes, scroll preserving filing, and direct chat submission.</h2>
+
+<style>
+.dn-app { padding: 0.5rem 0 1.5rem; font-family: var(--font-sans); color: var(--color-text-primary); }
+.dn-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; margin: 0 0 1rem; }
+.dn-head h3 { margin: 0; font-size: 16px; font-weight: 500; }
+.dn-head p { margin: 4px 0 0; font-size: 13px; color: var(--color-text-secondary); }
+.dn-toolbar { position: sticky; top: 0; z-index: 5; background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 10px 14px; margin: 0 0 1rem; display: flex; align-items: center; gap: 10px; }
+.dn-toolbar .count { background: var(--color-background-info); color: var(--color-text-info); padding: 3px 9px; border-radius: 999px; font-size: 12px; font-weight: 500; }
+.dn-toolbar .grow { flex: 1; font-size: 13px; color: var(--color-text-secondary); }
+.dn-toolbar button { font-size: 13px; }
+.dn-chips { display: flex; gap: 6px; flex-wrap: wrap; margin: 0 0 1rem; }
+.dn-chip { font-size: 12px; padding: 5px 11px; border: 0.5px solid var(--color-border-tertiary); background: var(--color-background-primary); border-radius: 999px; cursor: pointer; color: var(--color-text-secondary); user-select: none; }
+.dn-chip:hover { border-color: var(--color-border-secondary); }
+.dn-chip.active { background: var(--color-text-primary); color: var(--color-background-primary); border-color: var(--color-text-primary); }
+.dn-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 16px 18px; margin: 0 0 12px; position: relative; scroll-margin-top: 80px; }
+.dn-card.filed { background: var(--color-background-success); }
+.dn-card.filed::after { content: "filed"; position: absolute; top: 12px; right: 12px; font-size: 11px; font-weight: 500; background: var(--color-text-success); color: var(--color-background-primary); padding: 2px 8px; border-radius: var(--border-radius-md); }
+.dn-card.marked { box-shadow: 0 0 0 2px var(--color-border-info); }
+.dn-card.hidden { display: none; }
+.dn-topic { display: inline-block; font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: var(--border-radius-md); margin: 0 0 8px; letter-spacing: 0.3px; }
+.dn-topic.macro { background: #E6F1FB; color: #0C447C; }
+.dn-topic.ai { background: #EEEDFE; color: #3C3489; }
+.dn-topic.tech { background: #E1F5EE; color: #085041; }
+.dn-topic.crypto { background: #FAECE7; color: #712B13; }
+.dn-topic.longread { background: #FAEEDA; color: #633806; }
+.dn-card h4 { margin: 0 0 6px; font-size: 15px; font-weight: 500; line-height: 1.45; }
+.dn-source { font-size: 12px; color: var(--color-text-secondary); margin: 0 0 10px; }
+.dn-source a { color: var(--color-text-info); text-decoration: none; }
+.dn-excerpt { font-family: var(--font-serif); font-size: 14px; line-height: 1.65; margin: 0 0 10px; color: var(--color-text-primary); cursor: text; }
+.dn-why { font-size: 13px; line-height: 1.55; color: var(--color-text-secondary); background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 10px 12px; }
+.dn-why b { color: var(--color-text-primary); font-weight: 500; }
+.dn-popup { position: absolute; background: var(--color-text-primary); color: var(--color-background-primary); padding: 6px 12px; border-radius: var(--border-radius-md); font-size: 12px; cursor: pointer; z-index: 50; display: none; user-select: none; }
+.dn-overlay { background: rgba(0,0,0,0.4); border-radius: var(--border-radius-lg); padding: 1.5rem; display: none; align-items: center; justify-content: center; min-height: 320px; margin: 1rem 0; }
+.dn-overlay.show { display: flex; }
+.dn-modal { background: var(--color-background-primary); border-radius: var(--border-radius-lg); padding: 20px 22px; max-width: 540px; width: 100%; border: 0.5px solid var(--color-border-tertiary); }
+.dn-modal h4 { margin: 0 0 12px; font-size: 15px; font-weight: 500; }
+.dn-modal .quoted { font-family: var(--font-serif); background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 10px 14px; font-size: 14px; margin: 0 0 12px; max-height: 130px; overflow-y: auto; }
+.dn-modal textarea { width: 100%; min-height: 80px; font-family: var(--font-sans); font-size: 13px; }
+.dn-actions { display: flex; gap: 8px; justify-content: flex-end; margin: 12px 0 0; }
+.dn-tray { background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 12px 14px; margin: 0 0 1rem; }
+.dn-tray.empty { display: none; }
+.dn-tray h5 { margin: 0 0 8px; font-size: 13px; font-weight: 500; color: var(--color-text-secondary); display: flex; justify-content: space-between; }
+.dn-h-item { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 8px 10px; margin: 0 0 6px; font-size: 12px; position: relative; cursor: pointer; }
+.dn-h-item:hover { border-color: var(--color-border-secondary); }
+.dn-h-item .h-headline { font-weight: 500; font-size: 11px; color: var(--color-text-secondary); margin: 0 0 4px; }
+.dn-h-item .h-text { font-family: var(--font-serif); font-size: 13px; margin: 0 0 4px; padding-left: 8px; border-left: 2px solid var(--color-border-secondary); }
+.dn-h-item .h-note { font-size: 12px; color: var(--color-text-info); }
+.dn-h-del { position: absolute; top: 4px; right: 4px; border: none; background: transparent; cursor: pointer; padding: 4px; color: var(--color-text-tertiary); }
+.dn-h-del:hover { color: var(--color-text-danger); }
+.dn-toast { position: sticky; bottom: 16px; background: var(--color-text-primary); color: var(--color-background-primary); padding: 8px 14px; border-radius: var(--border-radius-md); font-size: 12px; text-align: center; margin: 12px auto 0; max-width: 280px; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+.dn-toast.show { opacity: 1; }
+</style>
+
+<div class="dn-app">
+
+  <div class="dn-head">
+    <div>
+      <h3>__DN_TITLE__</h3>
+      <p>__DN_SUBTITLE__</p>
+    </div>
+  </div>
+
+  <div class="dn-toolbar">
+    <span class="count" id="dnCount">0 marked</span>
+    <span class="grow" id="dnHint">Select text in a card to highlight and add a note.</span>
+    <button id="dnFileBtn" disabled><i class="ti ti-send" aria-hidden="true"></i> File to topics</button>
+  </div>
+
+  <div class="dn-chips" id="dnChips">
+    <span class="dn-chip active" data-topic="all">All</span>
+    <span class="dn-chip" data-topic="macro">Macro</span>
+    <span class="dn-chip" data-topic="ai">Ai</span>
+    <span class="dn-chip" data-topic="tech">Tech and vc</span>
+    <span class="dn-chip" data-topic="crypto">Crypto</span>
+    <span class="dn-chip" data-topic="longread">Long read</span>
+  </div>
+
+  <div class="dn-tray empty" id="dnTray">
+    <h5><span>Marked highlights</span></h5>
+    <div id="dnTrayList"></div>
+  </div>
+
+  <div id="dnCards"></div>
+
+  <div class="dn-overlay" id="dnOverlay">
+    <div class="dn-modal">
+      <h4>Add highlight and note</h4>
+      <div class="quoted" id="dnQuoted"></div>
+      <textarea id="dnNote" placeholder="Your thought on this paragraph"></textarea>
+      <div class="dn-actions">
+        <button id="dnCancel">Cancel</button>
+        <button id="dnSave"><i class="ti ti-check" aria-hidden="true"></i> Save highlight</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dn-toast" id="dnToast">Saved.</div>
+  <div class="dn-popup" id="dnPopup"><i class="ti ti-highlight" aria-hidden="true"></i> Highlight and note</div>
+
+</div>
+
+<script>
+const dnItems = __DN_ITEMS__;
+const dnTopicLabels = { macro:'Macro', ai:'Ai', tech:'Tech and vc', crypto:'Crypto', longread:'Long read' };
+
+let dnHighlights = [];
+let dnActiveFilter = 'all';
+let dnPending = null;
+let dnLastItemId = null;
+
+const dnCards = document.getElementById('dnCards');
+const dnTray = document.getElementById('dnTray');
+const dnTrayList = document.getElementById('dnTrayList');
+const dnCount = document.getElementById('dnCount');
+const dnFileBtn = document.getElementById('dnFileBtn');
+const dnPopup = document.getElementById('dnPopup');
+const dnOverlay = document.getElementById('dnOverlay');
+const dnQuoted = document.getElementById('dnQuoted');
+const dnNote = document.getElementById('dnNote');
+const dnToast = document.getElementById('dnToast');
+
+function dnRenderCards() {
+  dnCards.innerHTML = dnItems.map(it => {
+    const filed = dnHighlights.some(h => h.itemId === it.id && h.filed);
+    const marked = !filed && dnHighlights.some(h => h.itemId === it.id);
+    const visible = dnActiveFilter === 'all' || dnActiveFilter === it.topic;
+    return `<div class="dn-card ${filed?'filed':''} ${marked?'marked':''} ${visible?'':'hidden'}" data-topic="${it.topic}" data-id="${it.id}">
+      <span class="dn-topic ${it.topic}">${dnTopicLabels[it.topic]}</span>
+      <h4>${it.headline}</h4>
+      <div class="dn-source">${it.source} <a href="${it.url}" target="_blank">open source</a></div>
+      <p class="dn-excerpt">${it.excerpt}</p>
+      <div class="dn-why"><b>Why it matters.</b> ${it.why}</div>
+    </div>`;
+  }).join('');
+}
+
+function dnRenderTray() {
+  const pending = dnHighlights.filter(h => !h.filed);
+  dnCount.textContent = pending.length + ' marked';
+  dnFileBtn.disabled = pending.length === 0;
+  if (pending.length === 0) {
+    dnTray.classList.add('empty');
+    dnTrayList.innerHTML = '';
+    return;
+  }
+  dnTray.classList.remove('empty');
+  dnTrayList.innerHTML = pending.map(h => `
+    <div class="dn-h-item" data-itemid="${h.itemId}" data-id="${h.id}">
+      <button class="dn-h-del" data-id="${h.id}" aria-label="remove"><i class="ti ti-x" aria-hidden="true"></i></button>
+      <div class="h-headline">${h.headline.substring(0,55)}${h.headline.length>55?'...':''}</div>
+      <div class="h-text">${h.text}</div>
+      ${h.note ? `<div class="h-note">${h.note}</div>` : ''}
+    </div>`).join('');
+  dnTrayList.querySelectorAll('.dn-h-del').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const id = parseInt(btn.dataset.id);
+      dnHighlights = dnHighlights.filter(h => h.id !== id);
+      dnRefresh();
+    });
+  });
+  dnTrayList.querySelectorAll('.dn-h-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const itemId = parseInt(item.dataset.itemid);
+      dnScrollToCard(itemId);
+    });
+  });
+}
+
+function dnScrollToCard(itemId) {
+  const card = document.querySelector(`.dn-card[data-id="${itemId}"]`);
+  if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function dnRefresh(anchorItemId) {
+  dnRenderCards();
+  dnRenderTray();
+  if (anchorItemId) setTimeout(() => dnScrollToCard(anchorItemId), 30);
+}
+
+function dnShowToast(msg) {
+  dnToast.textContent = msg;
+  dnToast.classList.add('show');
+  setTimeout(() => dnToast.classList.remove('show'), 1400);
+}
+
+document.getElementById('dnChips').addEventListener('click', e => {
+  if (!e.target.classList.contains('dn-chip')) return;
+  document.querySelectorAll('.dn-chip').forEach(c => c.classList.remove('active'));
+  e.target.classList.add('active');
+  dnActiveFilter = e.target.dataset.topic;
+  dnRenderCards();
+});
+
+document.addEventListener('mouseup', e => {
+  setTimeout(() => {
+    const sel = window.getSelection();
+    if (!sel || sel.isCollapsed) { dnPopup.style.display = 'none'; return; }
+    const text = sel.toString().trim();
+    if (text.length < 8) { dnPopup.style.display = 'none'; return; }
+    let node = sel.anchorNode;
+    while (node && node.nodeType !== 1) node = node.parentNode;
+    const card = node && node.closest && node.closest('.dn-card');
+    if (!card) { dnPopup.style.display = 'none'; return; }
+    const itemId = parseInt(card.dataset.id);
+    const rect = sel.getRangeAt(0).getBoundingClientRect();
+    const appRect = document.querySelector('.dn-app').getBoundingClientRect();
+    dnPopup.style.display = 'block';
+    dnPopup.style.left = (rect.left - appRect.left + rect.width / 2 - 80) + 'px';
+    dnPopup.style.top = (rect.top - appRect.top - 36) + 'px';
+    dnPending = { itemId, text };
+  }, 10);
+});
+
+dnPopup.addEventListener('click', () => { if (dnPending) dnOpenModal(dnPending); });
+
+function dnOpenModal(payload) {
+  dnPopup.style.display = 'none';
+  dnLastItemId = payload.itemId;
+  dnQuoted.textContent = payload.text;
+  dnNote.value = '';
+  dnOverlay.classList.add('show');
+  setTimeout(() => dnNote.focus(), 50);
+  dnPending = payload;
+}
+
+function dnCloseModal(anchor) {
+  dnOverlay.classList.remove('show');
+  dnPending = null;
+  if (anchor && dnLastItemId) setTimeout(() => dnScrollToCard(dnLastItemId), 30);
+}
+
+document.getElementById('dnCancel').addEventListener('click', () => dnCloseModal(true));
+dnOverlay.addEventListener('click', e => { if (e.target === dnOverlay) dnCloseModal(true); });
+
+document.getElementById('dnSave').addEventListener('click', () => {
+  if (!dnPending) return;
+  const itemId = dnPending.itemId;
+  const it = dnItems.find(i => i.id === itemId);
+  dnHighlights.push({ id: Date.now(), itemId, headline: it.headline, topic: it.topic, source: it.source, url: it.url, text: dnPending.text, excerpt: it.excerpt, note: dnNote.value.trim(), filed: false });
+  dnCloseModal(false);
+  dnRefresh(itemId);
+  dnShowToast('Saved highlight on this card.');
+});
+
+dnFileBtn.addEventListener('click', () => {
+  const pending = dnHighlights.filter(h => !h.filed);
+  if (pending.length === 0) return;
+  const summary = pending.map((h, i) =>
+    `${i+1}. [${h.topic.toUpperCase()}] "${h.headline}"\n   Marked paragraph: "${h.text}"\n   Source: ${h.source} (${h.url})\n   Source excerpt for context: "${h.excerpt}"\n   My note: ${h.note || '(no comment)'}`
+  ).join('\n\n');
+  const prompt = `Please file these ${pending.length} highlight(s) into atomic topic notes inside Information and knowledge/Topics/ following the _SYSTEM.md spec. For each one, propose a theme bucket (existing or new), ask me to confirm with AskUserQuestion, then append the entry with headline, marked paragraph, source excerpt, and my note.\n\nHIGHLIGHTS TO FILE:\n\n${summary}`;
+  dnHighlights.forEach(h => { if (!h.filed) h.filed = true; });
+  dnRefresh();
+  if (typeof sendPrompt === 'function') sendPrompt(prompt);
+});
+
+dnRenderCards();
+dnRenderTray();
+</script>
