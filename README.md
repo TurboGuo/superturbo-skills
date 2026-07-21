@@ -13,6 +13,10 @@ Renders Turbo's financial independence (FI) dashboard: a progress card, an asset
 Plain-text-only variant of Turbo's short FOMC note — no visualization or rendered widgets, so it works inside Claude and on general gateways like Telegram and Slack. Leads with a **📈 POTENTIAL HIKE** or **📉 POTENTIAL CUT** verdict, two one-sentence reasons backed by official Fed sources, and exactly three institutions each tagged with their tendency and cited to the bank's own research site.
 - 🗣️ **Triggers:** "fomc plain", "fomc analysis", "analyze the last fomc", "fomc preview", or a named meeting date
 
+### 🤖 fomc-short-analysis-plain-bot
+The ultra-short "bot" variant of `fomc-short-analysis-plain` — plain text and emoji only, no markdown file, sized for a single bot message on Telegram, Slack, or any gateway that shows only plain text. Leads with a **📈 POTENTIAL HIKE** or **📉 POTENTIAL CUT** verdict, exactly one one-sentence reason with an official Fed source, and one or two institutions (two only if they disagree). No split line, inline answer only.
+- 🗣️ **Triggers:** "fomc bot", "fomc plain bot", "quick fomc", "fomc for telegram", "fomc for slack"
+
 ### 📰 news-and-knowledge-base-assistant
 Builds a curated daily news brief across your chosen topics, renders an inline reading widget with text highlighting and comment notes, and files highlighted items into atomic topic notes in your knowledge base.
 - 🗣️ **Triggers:** "daily news", "today's news", "morning brief", "news brief", or a fresh morning chat with no specific task
