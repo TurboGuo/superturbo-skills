@@ -10,6 +10,7 @@ description: >
   crypto", "macro on stocks / gold / cash", "what is macro doing to X", or names
   one or more of the four asset classes and wants the current macro verdict.
   If Turbo names one asset class, cover only that one; otherwise cover all four.
+  Replies fully in Chinese when the request is in Chinese.
 ---
 
 # Macro Impact
@@ -45,6 +46,16 @@ cash. Output is plain text only.
 - When you calculate anything (real yields), show the subtraction steps.
 - Text only. Do not build an HTML file, artifact, chart, or widget for this skill
   even if a visualization would normally be offered.
+- ONE factor per bullet. Each bullet covers a single factor and its sub line is
+  ONE sentence about that one factor only. Never chain two data points into one
+  sentence. A signal such as VIX either earns its own bullet (only when it is
+  decisive for the verdict) or is left out entirely.
+- Language: if Turbo's request is in Chinese, reply FULLY in Chinese. Translate
+  the factor headlines and the reasoning, render the verdict as the Chinese term
+  plus the English word (看多 BULLISH or 看跌 BEARISH), and translate qualifiers
+  (受限 = capped, 筑底 = bottoming, 对冲 = offset). Keep numbers, tickers, and the
+  source links unchanged. Otherwise reply in English. The no dash rule applies in
+  both languages.
 
 ## Data to pull each run
 
@@ -119,8 +130,10 @@ US Cash (T bills, money market):
 
 Start with one line: "As of <date/time context>. Regime: <two or three words>."
 Then, for each asset in scope, output this block. Use real bullet points with a
-blank line before each list. Choose the THREE most decisive factors: usually two
-that confirm the verdict plus one offset (mark the offset "(offset)").
+blank line before each list. Choose the three most decisive factors, one factor
+per bullet, usually two that confirm the verdict plus one offset (mark the offset
+"(offset)"). Do not merge factors: if VIX is not one of the three most decisive,
+leave it out rather than tacking it onto another bullet.
 
 ```
 **<emoji> <Asset name> — <VERDICT>**
@@ -141,23 +154,34 @@ End with a single "Sources:" line: markdown hyperlinks separated by commas, no
 inline citations anywhere above. Include the primary series used (FRED DFII10,
 FRED BAMLH0A0HYM2, Fed H.15, ISM PMI, BLS CPI) plus the price / flow reads.
 
+After the Sources line, ALWAYS add a final disclaimer line:
+- English: "This is AI generated and may not be fully accurate, verify it before you use."
+- Chinese: "本分析由 AI 生成，可能不完全准确，使用前请自行核实。"
+
 ## Worked example of the target output (crypto only)
 
 **₿ Crypto — BEARISH (bottoming)**
 
 - 📉 Real yields headwind
-  - The 10 year real yield at 2.35% with the Fed pricing a possible hike keeps the discount rate high for a no cashflow asset, and BTC near $64k sits below its 50, 100 and 200 day EMAs.
-- 📉 Strong dollar and risk off
-  - DXY near 101 plus the US Iran escalation strengthened the safe haven dollar and capped crypto's upside.
-- 📈 ETF and whale support (offset)
-  - Spot BTC ETFs logged a second straight week of inflows and whales kept accumulating with MVRV near past cycle bottoms, cushioning the downside.
+  - The 10 year real yield at 2.35% keeps the discount rate high for a no cashflow asset, the single biggest drag on crypto.
+- 📉 Strong dollar
+  - DXY near 101 tightens global conditions and pulls money out of the highest beta assets.
+- 📈 ETF inflows (offset)
+  - Spot BTC ETFs logged a second straight week of inflows, cushioning the downside.
 
 Sources: [FRED DFII10](https://fred.stlouisfed.org/series/DFII10), [FXStreet BTC](https://www.fxstreet.com/cryptocurrencies), [Glassnode](https://research.glassnode.com/).
+
+This is AI generated and may not be fully accurate, verify it before you use.
+
+A Chinese request produces the same structure in Chinese, for example the verdict
+line reads "**₿ 加密货币 — 看跌 BEARISH（筑底）**" and the closing line reads
+"本分析由 AI 生成，可能不完全准确，使用前请自行核实。"
 
 ## Notes
 
 - If a data point cannot be fetched, say so briefly in that factor rather than
   guessing, and still give the verdict from the factors you have.
 - Keep each reasoning sentence to one sentence with a concrete number.
-- This is analysis for Turbo's own use, not financial advice; do not add a
-  disclaimer unless asked.
+- This is analysis for Turbo's own use, not financial advice. Do not add a
+  financial advice disclaimer, but ALWAYS include the AI generated verify line
+  from the output format section as the final line.
