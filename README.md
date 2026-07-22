@@ -32,6 +32,11 @@ Analyzes any user's X/Twitter writing style and generates draft posts that sound
 - 🗣️ **Triggers:** "draft tweets for me", "write posts in my style", "ghostwrite", "tweet ideas", "x writer"
 - 🔑 Requires a Bearer Token and X handle set in the skill config before use.
 
+### 📤 publish-to-superturbo-github
+Publishes or updates a skill in this repo. When Turbo says "update this skill to superturbo github", it commits the skill's own folder (SKILL.md plus any assets) to `main` following the one-folder-per-skill convention, and always updates this README's skill index in the same pass.
+- 🗣️ **Triggers:** "update this skill to superturbo github", "push this skill to superturbo", "publish to superturbo github", "add this skill to my github"
+- 🔗 Targets github.com/TurboGuo/superturbo-skills via the GitHub connection.
+
 ---
 
 🛠️ Built by Turbo.
