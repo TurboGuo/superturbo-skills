@@ -13,6 +13,11 @@ Renders Turbo's financial independence (FI) dashboard: a progress card, an asset
 Plain-text-only variant of Turbo's short FOMC note — no visualization or rendered widgets, so it works inside Claude and on general gateways like Telegram and Slack. Leads with a **📈 POTENTIAL HIKE** or **📉 POTENTIAL CUT** verdict, two one-sentence reasons backed by official Fed sources, and exactly three institutions each tagged with their tendency and cited to the bank's own research site.
 - 🗣️ **Triggers:** "fomc plain", "fomc analysis", "analyze the last fomc", "fomc preview", or a named meeting date
 
+### 📊 macro-impact
+Text-only read on whether the current macro environment is bullish or bearish for Turbo's four asset classes — crypto, US stocks, gold, and US cash. Ask about all four or just one. For each asset it returns a one-word verdict, three 📈/📉-tagged factors with a one-sentence reasoning each, and sources linked only at the end. Pulls live data fresh, prefers official/primary sources (Fed, FRED, Treasury, BLS, BEA, ISM, Cboe), and shows the real-yield math.
+- 🗣️ **Triggers:** "macro impact", "macro read", "is macro bullish or bearish", "how is macro affecting my assets", "macro on crypto / stocks / gold / cash"
+- 🔎 Uses Exa for search and cross-checks X for crypto sentiment and flows.
+
 ### 📰 news-and-knowledge-base-assistant
 Builds a curated daily news brief across your chosen topics, renders an inline reading widget with text highlighting and comment notes, and files highlighted items into atomic topic notes in your knowledge base.
 - 🗣️ **Triggers:** "daily news", "today's news", "morning brief", "news brief", or a fresh morning chat with no specific task
