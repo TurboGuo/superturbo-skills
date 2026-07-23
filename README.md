@@ -9,6 +9,11 @@ Renders Turbo's financial independence (FI) dashboard: a progress card, an asset
 - 🗣️ **Triggers:** "fi tracker", "FI dashboard", "when can I retire", "years to financial independence"
 - 🌏 Replies in Chinese when the request is in Chinese.
 
+### 🍟 mcdonalds-fallback-plan
+Turbo's "Plan McDonald" safety net. When Turbo asks for financial advice, it first asks his current balance, and if it is under $50 it playfully breaks the news that the highest-return move is a paycheck, then hands him the official McDonald's apply links plus a short get-the-job game plan. Above $50 it just gives normal financial advice.
+- 🗣️ **Triggers:** "give me financial advice", "what should I do with my money", "am I broke", "help me with my finances"
+- 😄 Playful nudge tone; asks for the balance each time rather than reading any account.
+
 ### 🏦 fomc-short-analysis-plain
 Plain-text-only variant of Turbo's short FOMC note — no visualization or rendered widgets, so it works inside Claude and on general gateways like Telegram and Slack. Leads with a **📈 POTENTIAL HIKE** or **📉 POTENTIAL CUT** verdict, two one-sentence reasons backed by official Fed sources, and exactly three institutions each tagged with their tendency and cited to the bank's own research site.
 - 🗣️ **Triggers:** "fomc plain", "fomc analysis", "analyze the last fomc", "fomc preview", or a named meeting date
