@@ -1,0 +1,411 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>__TITLE__</title><style>
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#f9f9f7}
+:root[data-theme="dark"] body{background:#0d0d0d}
+@media(prefers-color-scheme:dark){:root:where(:not([data-theme="light"])) body{background:#0d0d0d}}
+.viz-root{color-scheme:light;color:var(--ink1);background:var(--plane);min-height:100vh;
+ --plane:#f9f9f7;--surface:#fcfcfb;--ink1:#0b0b0b;--ink2:#52514e;--muted:#898781;
+ --grid:#e1e0d9;--axis:#c3c2b7;--ring:rgba(11,11,11,.10);
+ --s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#4a3aa7;--good:#0ca30c;--warn:#fab219;--bad:#d03b3b}
+@media(prefers-color-scheme:dark){:root:where(:not([data-theme="light"])) .viz-root{color-scheme:dark;
+ --plane:#0d0d0d;--surface:#1a1a19;--ink1:#fff;--ink2:#c3c2b7;--muted:#898781;
+ --grid:#2c2c2a;--axis:#383835;--ring:rgba(255,255,255,.10);--s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#9085e9}}
+:root[data-theme="dark"] .viz-root{color-scheme:dark;--plane:#0d0d0d;--surface:#1a1a19;--ink1:#fff;
+ --ink2:#c3c2b7;--muted:#898781;--grid:#2c2c2a;--axis:#383835;--ring:rgba(255,255,255,.10);
+ --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#9085e9}
+.wrap{max-width:1160px;margin:0 auto;padding:26px 20px 60px}
+header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+header>div{flex:1;min-width:280px}
+h1{font-size:20px;font-weight:650;margin:0}
+.sub{color:var(--muted);font-size:12px;margin:10px 0 0;line-height:1.6}
+.intro{margin:12px 0 0;padding-left:19px;max-width:960px}
+.intro li{font-size:14px;line-height:1.85;color:var(--ink2);margin:7px 0}
+.intro li b{color:var(--ink1);font-weight:650}
+.intro li::marker{color:var(--s1)}
+button.ctl{font:inherit;font-size:12.5px;padding:6px 12px;border-radius:7px;border:1px solid var(--ring);
+ background:var(--surface);color:var(--ink2);cursor:pointer}
+.r1{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0 12px}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+@media(max-width:520px){.r1,.r2{grid-template-columns:1fr}}
+.tile{background:var(--surface);border:1px solid var(--ring);border-radius:11px;padding:15px 16px}
+.tile .lbl{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:7px}
+.kd{width:9px;height:9px;border-radius:50%;flex:none;display:inline-block}
+.scoreRow{display:flex;align-items:baseline;gap:9px;margin-top:8px;flex-wrap:wrap}
+.score{font-size:34px;font-weight:650;line-height:1}
+.of{font-size:15px;color:var(--muted);font-weight:500}
+.pill{font-size:11.5px;font-weight:650;padding:3px 9px;border-radius:6px;color:#fff}
+.pill.good{background:var(--good)}.pill.mid{background:var(--warn);color:#3a2c00}.pill.weak{background:var(--bad)}
+.tile .raw{font-size:12.5px;color:var(--ink2);margin-top:9px;font-variant-numeric:tabular-nums}
+.tile .base{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.55}
+.card{background:var(--surface);border:1px solid var(--ring);border-radius:12px;padding:16px 18px 12px;margin-bottom:14px}
+.card h2{font-size:15px;font-weight:640;margin:0 0 3px}
+.card .note{font-size:12px;color:var(--muted);margin:0 0 12px;line-height:1.6}
+.legend{display:flex;gap:15px;flex-wrap:wrap;font-size:12.5px;color:var(--ink2);margin:0 0 8px}
+.legend span{display:flex;align-items:center;gap:7px}
+.key{width:15px;border-radius:1px;flex:none}
+svg{display:block;width:100%;overflow:visible}
+.tick{font-size:10.5px;fill:var(--muted);font-variant-numeric:tabular-nums}
+.dlab{font-size:11.5px;font-weight:640;font-variant-numeric:tabular-nums;fill:var(--ink1)}
+.ptitle{font-size:11.5px;fill:var(--ink2);font-weight:600}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:2px 0 14px}
+.tab{font:inherit;font-size:13px;padding:8px 14px;border-radius:8px;border:1px solid var(--ring);
+ background:var(--plane);color:var(--ink2);cursor:pointer}
+.tab[aria-selected="true"]{background:var(--surface);color:var(--ink1);font-weight:640;border-color:var(--axis)}
+/* overview sortable table */
+.ovw{width:100%;border-collapse:collapse;font-size:12.5px}
+.ovw th{font-size:11.5px;color:var(--muted);font-weight:600;text-align:right;padding:8px 9px;
+ border-bottom:1px solid var(--axis);cursor:pointer;white-space:nowrap;user-select:none}
+.ovw th:first-child,.ovw td:first-child{text-align:left}
+.ovw th:hover{color:var(--ink1)}
+.ovw th .ar{color:var(--muted);font-size:9px;margin-left:3px}
+.ovw th[data-on="1"]{color:var(--ink1)}
+.ovw td{text-align:right;padding:9px;border-bottom:1px solid var(--grid);font-variant-numeric:tabular-nums}
+.ovw td.t{font-weight:600;max-width:330px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sc{display:inline-flex;align-items:center;gap:6px;justify-content:flex-end}
+.chip{width:8px;height:8px;border-radius:2px;flex:none}
+.chip.good{background:var(--good)}.chip.mid{background:var(--warn)}.chip.weak{background:var(--bad)}
+/* per post cards */
+.pcard{border-top:1px solid var(--grid);padding:16px 2px}
+.pcard:first-child{border-top:none;padding-top:4px}
+.phead{display:flex;align-items:center;gap:11px;margin-bottom:11px}
+.rank{width:24px;height:24px;border-radius:50%;background:var(--plane);border:1px solid var(--ring);
+ display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:650;color:var(--ink2);flex:none}
+.ptit{flex:1;font-size:13.5px;font-weight:640;min-width:0}
+.pdate{font-size:11.5px;color:var(--muted);flex:none;font-variant-numeric:tabular-nums}
+.psc{font-size:19px;font-weight:650;font-variant-numeric:tabular-nums;flex:none}
+.pbody{display:flex;gap:16px;flex-wrap:wrap;padding-left:35px}
+.cov{display:none}
+.cov img{width:100%;border-radius:8px;border:1px solid var(--ring);display:block}
+.cov .cap{font-size:10.5px;color:var(--muted);margin-top:6px;line-height:1.5}
+.bmain{flex:1;min-width:300px}
+.dgrid{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:11px}
+.dbox{background:var(--plane);border:1px solid var(--ring);border-radius:8px;padding:7px 11px;min-width:86px}
+.dbox .k{font-size:10.5px;color:var(--muted)}
+.dbox .v{font-size:15px;font-weight:640;font-variant-numeric:tabular-nums;margin-top:3px}
+.blk{font-size:13.5px;line-height:1.8;color:var(--ink2);margin:6px 0 0;padding-left:18px}
+.blk li{margin:5px 0}
+.blk li::marker{color:var(--muted)}
+.tagline{font-weight:600}
+.tagline{font-size:11.5px;color:var(--muted);margin-bottom:3px;letter-spacing:.03em}
+/* opaque tooltip */
+.tip{position:fixed;pointer-events:none;z-index:60;background:#fcfcfb;border:1px solid var(--axis);
+ border-radius:9px;padding:11px 13px;font-size:12px;color:#0b0b0b;max-width:330px;
+ box-shadow:0 10px 30px rgba(0,0,0,.26);opacity:0;transition:opacity .09s}
+:root[data-theme="dark"] .tip{background:#232322;border-color:#4a4a46;color:#fff;box-shadow:0 10px 30px rgba(0,0,0,.6)}
+@media(prefers-color-scheme:dark){:root:where(:not([data-theme="light"])) .tip{background:#232322;border-color:#4a4a46;color:#fff;box-shadow:0 10px 30px rgba(0,0,0,.6)}}
+.tip .td{font-size:11px;color:var(--muted);margin-bottom:6px}
+.tip .tr{display:flex;justify-content:space-between;gap:16px;margin:3px 0;font-variant-numeric:tabular-nums}
+details{margin-top:10px}summary{font-size:12.5px;color:var(--ink2);cursor:pointer;padding:6px 0}
+table.tv{width:100%;border-collapse:collapse;font-size:11.5px;font-variant-numeric:tabular-nums;margin-top:8px}
+table.tv th,table.tv td{text-align:right;padding:5px 7px;border-bottom:1px solid var(--grid)}
+table.tv th:first-child,table.tv td:first-child{text-align:left;font-variant-numeric:normal}
+table.tv th{color:var(--muted);font-weight:600}
+.sug .srow{display:flex;gap:13px;padding:15px 0;border-top:1px solid var(--grid)}
+.sug .srow:first-of-type{border-top:none;padding-top:4px}
+.shead{font-size:13.5px;font-weight:645;line-height:1.5;margin-bottom:7px}
+.trig{font-size:11.5px;color:var(--ink2);background:var(--plane);border:1px solid var(--ring);
+ border-radius:6px;padding:7px 10px;margin-bottom:8px;line-height:1.65}
+.trig b{font-variant-numeric:tabular-nums;color:var(--ink1)}
+.sug ul{margin:0;padding-left:17px;font-size:12.5px;color:var(--ink2);line-height:1.75}
+.src{font-size:11px;color:var(--muted);margin-top:8px;line-height:1.6}
+.src a{color:var(--muted)}
+.demolbl{font-size:11.5px;color:var(--muted);margin:13px 0 -2px;letter-spacing:.03em}
+.demo{display:flex;gap:14px;flex-wrap:wrap;margin:9px 0 4px}
+.dm{width:118px}
+.dmslot{height:157px;display:flex;align-items:center}
+.dmbox{width:118px;height:157px;border-radius:7px;border:1px solid var(--ring);overflow:hidden;position:relative;
+ display:flex;flex-direction:column;justify-content:center;padding:9px}
+.dmbox.wide{height:47px}
+.dmcap{font-size:10.5px;line-height:1.5;margin-top:6px;color:var(--ink2)}
+.dmcap .yes{color:var(--good);font-weight:700}
+.dmcap .no{color:var(--bad);font-weight:700}
+.shot{position:absolute;inset:0;background:
+ repeating-linear-gradient(0deg,#e8e8e4 0 3px,transparent 3px 9px) 0 0/100% 60%,
+ linear-gradient(#f3f3f0,#f3f3f0);background-repeat:no-repeat}
+.dense{position:absolute;inset:0;background:repeating-linear-gradient(0deg,#d8d8d3 0 2px,#fbfbf9 2px 6px)}
+.bigred{position:relative;z-index:2;font-weight:800;font-size:13px;line-height:1.35;color:#e0332e;
+ text-align:center;letter-spacing:.5px}
+.bigink{position:relative;z-index:2;font-weight:800;font-size:13px;line-height:1.4;color:#2a2a28;text-align:center}
+.plainbg{position:absolute;inset:0;background:#efeadf}
+.blurred{filter:blur(.6px);opacity:.88}
+.crop{position:absolute;top:0;bottom:0;width:22%;background:repeating-linear-gradient(45deg,rgba(208,59,59,.16) 0 5px,transparent 5px 10px)}
+.crop.l{left:0}.crop.r{right:0}
+.foot{font-size:11.5px;color:var(--muted);line-height:1.75;margin-top:20px}
+.foot b{color:var(--ink2);font-weight:650}
+
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ovw{min-width:720px}
+.ovw th,.ovw td{padding:8px 7px;white-space:nowrap}
+.ovw td.t{max-width:300px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+table.tv{min-width:760px}
+table.tv th,table.tv td{white-space:nowrap}
+.tt{display:inline-block;font-size:10.5px;font-weight:650;padding:2px 7px;border-radius:5px;
+ border:1px solid var(--ring);color:var(--ink2);background:var(--plane);margin-left:8px;vertical-align:1px}
+a.plink{color:var(--muted);text-decoration:none;font-size:11px;margin-left:7px}
+a.plink:hover{color:var(--ink1)}
+
+/* ---- reading sizes. These override the base block above on purpose: the per
+   post cells are the product and need to be comfortable to read, not shipped at
+   the smaller sizes a generic dashboard template defaults to. See
+   references/design.md, whose type table matches this block. ---- */
+.intro li{font-size:15.5px;line-height:1.9}
+.card .note{font-size:13.5px;line-height:1.7}
+.sub{font-size:13px}
+.tile .lbl{font-size:13px}
+.tile .raw{font-size:14px}
+.tile .base{font-size:12.5px;line-height:1.65}
+.card h2{font-size:16.5px}
+.tab{font-size:14.5px;padding:9px 15px}
+.legend{font-size:13.5px}
+.ovw{font-size:14px}
+.ovw th{font-size:12.5px}
+.ptit{font-size:15px}
+.pdate{font-size:12.5px}
+.psc{font-size:20px}
+.dbox .k{font-size:11.5px}
+.dbox .v{font-size:16px}
+.tagline{font-size:12.5px}
+.blk{font-size:15.5px;line-height:1.85}
+.blk li{margin:7px 0}
+.shead{font-size:15.5px;line-height:1.55}
+.trig{font-size:13.5px;line-height:1.7;padding:9px 12px}
+.sug ul{font-size:14.5px;line-height:1.8}
+.src{font-size:12.5px;line-height:1.7}
+.foot{font-size:12.5px;line-height:1.85}
+table.tv{font-size:12.5px}
+summary{font-size:13.5px}
+.tt{font-size:11px}
+a.plink{font-size:12px}
+.tip{font-size:13px}
+</style></head>
+<body><div class="viz-root"><div class="wrap">
+<header><div><h1 id="h1"></h1>
+<ul class="intro" id="intro"></ul>
+<p class="sub" id="sub"></p></div>
+<button class="ctl" id="bTheme">Dark</button></header>
+
+<div class="r1" id="row1"></div>
+<div class="r2" id="row2"></div>
+
+<div class="card">
+  <h2>Total followers and per post performance</h2>
+  <p class="note">The thick line is total followers. Below it are the per post follows and the three scores, sharing one date axis. Posts published the same day are spread sideways. Hover for the day or the post.</p>
+  <div class="legend">
+    <span><i class="key" style="background:var(--s1);height:3px"></i>Total followers</span>
+    <span><i class="key" style="background:var(--s4);height:2px"></i>Follows per post</span>
+    <span><i class="key" style="background:var(--s1);height:2px"></i>Follow rate</span>
+    <span><i class="key" style="background:var(--s2);height:2px"></i>Profile visit rate</span>
+    <span><i class="key" style="background:var(--s3);height:2px"></i>Engagement rate</span>
+  </div>
+  <svg id="main" viewBox="0 0 1000 436" role="img" aria-label="Follower curve with per post follows and three scores"></svg>
+  <details><summary>Table view</summary><div id="tv"></div></details>
+</div>
+
+<div class="card sug" id="sug"></div>
+<div class="card">
+  <h2>Post by post</h2>
+  <p class="note">Overview first, click any header to sort. The three tabs after it are the per dimension diagnosis, all expanded.</p>
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" data-k="ovw" aria-selected="true">Follow overview</button>
+    <button class="tab" role="tab" data-k="fan" aria-selected="false">Follow rate</button>
+    <button class="tab" role="tab" data-k="cov" aria-selected="false">Profile visit rate</button>
+    <button class="tab" role="tab" data-k="er" aria-selected="false">Engagement rate</button>
+  </div>
+  <div id="sortbar" style="display:none;margin:-4px 0 12px"></div>
+  <div id="list"></div>
+</div>
+
+<div class="foot" id="foot"></div>
+</div></div><div class="tip" id="tip"></div>
+<script>
+const D=__DATA__;
+const ACC=D.acc, N=D.posts, AN=D.analysis, SER=D.series, META=D.meta;
+document.getElementById('h1').textContent=META.title;
+document.title=META.title;
+document.getElementById('intro').innerHTML=(META.intro||[]).map(x=>`<li><b>${x.k}</b> ${x.v}</li>`).join('');
+document.getElementById('sub').textContent=META.subtitle;
+document.getElementById('foot').innerHTML=D.foot.map(f=>`<b>${f.k}</b>${f.v}`).join('<br>');
+const $=s=>document.querySelector(s), fmt=n=>Math.round(n).toLocaleString('en-US');
+const ns=(t,a)=>{const e=document.createElementNS('http://www.w3.org/2000/svg',t);for(const k in a)e.setAttribute(k,a[k]);return e;};
+const clr=e=>{while(e.firstChild)e.removeChild(e.firstChild)};
+const ul=a=>a&&a.length?'<ul class="blk">'+a.map(x=>`<li>${x}</li>`).join('')+'</ul>':'<div class="blk">no note</div>';
+const MO=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const md=s=>MO[+s.slice(5,7)-1]+' '+(+s.slice(8,10));
+
+const tile=t=>`<div class="tile"><div class="lbl">${t.c?`<i class="kd" style="background:${t.c}"></i>`:''}${t.l}</div>
+ <div class="scoreRow"><span class="score">${t.v}</span>${t.of?'<span class="of">/100</span>':''}
+ ${t.b?`<span class="pill ${t.bc}">${t.b}</span>`:''}</div>
+ <div class="raw">${t.raw}</div>${t.base?`<div class="base">${t.base}</div>`:''}</div>`;
+
+$('#row1').innerHTML=
+ tile({l:'Net followers gained',v:(ACC.netFol>=0?'+':'')+ACC.netFol,of:0,raw:META.folRaw,base:META.folBase})
++tile({c:'var(--s1)',l:'Follow rate (follows / views)',v:ACC.frS,of:1,b:ACC.frB,bc:ACC.frBc,
+  raw:`${ACC.frR}% │ ${ACC.fol} follows / ${fmt(ACC.imp)} views`});
+$('#row2').innerHTML=
+ tile({c:'var(--s2)',l:'Profile visit rate (visits / views)',v:ACC.pvS,of:1,b:ACC.pvB,bc:ACC.pvBc,
+  raw:`${ACC.pvR}% │ ${ACC.pv} profile visits / ${fmt(ACC.imp)} views`})
++tile({c:'var(--s3)',l:'Engagement rate (strict engagements / views)',v:ACC.erS,of:1,b:ACC.erB,bc:ACC.erBc,
+  raw:`${ACC.strictR.toFixed(2)}% │ ${ACC.strict} strict engagements / ${fmt(ACC.imp)} views`});
+
+/* combined chart, three panels on one date axis */
+const W=1000, M={l:56,r:132,t:16,b:40};
+const PW=W-M.l-M.r, ND=SER.length;
+const dx=i=>M.l+(i/(ND-1))*PW;
+const dayIdx={}; SER.forEach((r,i)=>dayIdx[r.d]=i);
+const ORD=[...N].sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:0);
+const perDay={}; ORD.forEach(n=>(perDay[n.date]=perDay[n.date]||[]).push(n));
+const nxm=new Map();
+Object.entries(perDay).forEach(([d,arr])=>{
+  const c=dx(dayIdx[d]), slot=PW/(ND-1), w=slot*0.85;
+  arr.forEach((n,j)=>{ nxm.set(n, arr.length===1 ? c : c-w/2+(j/(arr.length-1))*w); });});
+const NX=n=>nxm.get(n);
+const H1=132,H2=62,H3=126,G=16;
+const Y1=M.t, Y2=Y1+H1+G+14, Y3=Y2+H2+G+14;
+function drawMain(){
+ const svg=$('#main'); clr(svg);
+ const lab=(x,y,t)=>{const e=ns('text',{x,y,class:'ptitle'});e.textContent=t;svg.appendChild(e);};
+ const fv=SER.map(r=>r.f), mn=Math.min(...fv), mx=Math.max(...fv);
+ const sp=Math.max((mx-mn)*2.2,8), mid=(mn+mx)/2, lo1=mid-sp/2, hi1=mid+sp/2;
+ const y1=v=>Y1+H1-(v-lo1)/(hi1-lo1)*H1;
+ lab(M.l,Y1-4,'Total followers');
+ [lo1,mid,hi1].forEach(t=>{svg.appendChild(ns('line',{x1:M.l,x2:M.l+PW,y1:y1(t),y2:y1(t),stroke:'var(--grid)','stroke-width':1}));
+  const e=ns('text',{x:M.l-9,y:y1(t)+3.5,'text-anchor':'end',class:'tick'});e.textContent=fmt(t);svg.appendChild(e);});
+ svg.appendChild(ns('path',{d:fv.map((v,i)=>(i?'L':'M')+dx(i).toFixed(1)+' '+y1(v).toFixed(1)).join(' '),
+   fill:'none',stroke:'var(--s1)','stroke-width':3.5,'stroke-linejoin':'round','stroke-linecap':'round'}));
+ const eL=ns('text',{x:M.l+PW+9,y:y1(fv[ND-1])+4,class:'dlab'});eL.textContent=fmt(fv[ND-1]);svg.appendChild(eL);
+ svg.appendChild(ns('circle',{cx:dx(ND-1),cy:y1(fv[ND-1]),r:5,fill:'var(--s1)',stroke:'var(--surface)','stroke-width':2}));
+
+ const fmax=Math.max(2,...ORD.map(n=>n.fol));
+ const y2=v=>Y2+H2-v/fmax*H2;
+ lab(M.l,Y2-4,'Follows per post');
+ [0,fmax].forEach(t=>{svg.appendChild(ns('line',{x1:M.l,x2:M.l+PW,y1:y2(t),y2:y2(t),stroke:'var(--grid)','stroke-width':1}));
+  const e=ns('text',{x:M.l-9,y:y2(t)+3.5,'text-anchor':'end',class:'tick'});e.textContent=t;svg.appendChild(e);});
+ svg.appendChild(ns('path',{d:ORD.map((n,i)=>(i?'L':'M')+NX(n).toFixed(1)+' '+y2(n.fol).toFixed(1)).join(' '),
+   fill:'none',stroke:'var(--s4)','stroke-width':1.6,'stroke-linejoin':'round','stroke-linecap':'round'}));
+ ORD.forEach(n=>svg.appendChild(ns('circle',{cx:NX(n),cy:y2(n.fol),r:3.2,fill:'var(--s4)',stroke:'var(--surface)','stroke-width':1.6})));
+ const nAll=ORD.length,nZero=ORD.filter(n=>!n.fol).length;
+ const z=ns('text',{x:M.l+PW+9,y:y2(0)+4,class:'dlab'});
+ z.textContent=nZero===nAll?('0 on all '+nAll+' posts'):('0 on '+nZero+' of '+nAll);svg.appendChild(z);
+
+ const y3=v=>Y3+H3-v/100*H3;
+ lab(M.l,Y3-4,'Three scores');
+ [0,40,70,100].forEach(t=>{svg.appendChild(ns('line',{x1:M.l,x2:M.l+PW,y1:y3(t),y2:y3(t),
+   stroke:(t===40||t===70)?'var(--axis)':'var(--grid)','stroke-width':1}));
+  const e=ns('text',{x:M.l-9,y:y3(t)+3.5,'text-anchor':'end',class:'tick'});e.textContent=t;svg.appendChild(e);});
+ [[70,'Good'],[40,'Fair']].forEach(([t,l])=>{const e=ns('text',{x:M.l+5,y:y3(t)-5,class:'tick'});e.textContent=l;svg.appendChild(e);});
+ const SS=[['frS','var(--s1)','Follow rate'],['pvS','var(--s2)','Profile visits'],['erS','var(--s3)','Engagement']];
+ SS.forEach(([k,c])=>{
+  svg.appendChild(ns('path',{d:ORD.map((n,i)=>(i?'L':'M')+NX(n).toFixed(1)+' '+y3(n[k]).toFixed(1)).join(' '),
+    fill:'none',stroke:c,'stroke-width':1.6,'stroke-linejoin':'round','stroke-linecap':'round'}));
+  ORD.forEach(n=>svg.appendChild(ns('circle',{cx:NX(n),cy:y3(n[k]),r:3.2,fill:c,stroke:'var(--surface)','stroke-width':1.6})));});
+ const last=ORD[ORD.length-1];
+ const labs=SS.map(([k,c,t])=>({y0:y3(last[k]),y:y3(last[k]),txt:t+' '+last[k]})).sort((a,b)=>a.y-b.y);
+ for(let i=1;i<labs.length;i++) if(labs[i].y-labs[i-1].y<15) labs[i].y=labs[i-1].y+15;
+ const over=labs[labs.length-1].y-(Y3+H3-2); if(over>0) labs.forEach(L=>L.y-=over);
+ labs.forEach(L=>{ if(Math.abs(L.y-L.y0)>1)
+   svg.appendChild(ns('path',{d:`M${M.l+PW+3} ${L.y0} L${M.l+PW+10} ${L.y0} L${M.l+PW+16} ${L.y} L${M.l+PW+22} ${L.y}`,fill:'none',stroke:'var(--axis)','stroke-width':1}));
+  const e=ns('text',{x:M.l+PW+26,y:L.y+4,class:'dlab'});e.textContent=L.txt;svg.appendChild(e);});
+
+ const AX=Y3+H3;
+ svg.appendChild(ns('line',{x1:M.l,x2:M.l+PW,y1:AX,y2:AX,stroke:'var(--axis)','stroke-width':1}));
+ SER.forEach((r,i)=>{const e=ns('text',{x:dx(i),y:AX+17,'text-anchor':'middle',class:'tick'});
+   e.textContent=+r.d.slice(8,10); svg.appendChild(e);});
+ const mo=ns('text',{x:M.l-9,y:AX+17,'text-anchor':'end',class:'tick'});
+ mo.textContent=MO[+SER[0].d.slice(5,7)-1];svg.appendChild(mo);
+}
+drawMain();
+
+const tip=$('#tip');
+function showTip(e,h){tip.innerHTML=h;tip.style.opacity=1;
+ tip.style.left=Math.min(innerWidth-tip.offsetWidth-12,Math.max(8,e.clientX+16))+'px';
+ tip.style.top=Math.max(8,Math.min(innerHeight-tip.offsetHeight-12,e.clientY-tip.offsetHeight/2))+'px';}
+$('#main').addEventListener('mousemove',e=>{
+ const b=$('#main').getBoundingClientRect();
+ const px=(e.clientX-b.left)/b.width*W, py=(e.clientY-b.top)/b.height*436;
+ if(py<Y2-10){
+  let i=Math.round((px-M.l)/PW*(ND-1)); i=Math.max(0,Math.min(ND-1,i)); const r=SER[i];
+  let h=`<div class="td">${md(r.d)}</div>
+   <div class="tr"><span>Total followers</span><b>${fmt(r.f)}</b></div>
+   <div class="tr"><span>New follows / unfollows</span><b>${r.nf} / ${r.uf}</b></div>`;
+  h+= r.list&&r.list.length
+   ? '<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--grid);line-height:1.7">Published<br>'+r.list.map(x=>`\\u00b7 ${x.t}<br><span style="color:var(--muted)">&nbsp;&nbsp;${fmt(x.i)} views, ${x.v} visits, ${x.f} follows</span>`).join('<br>')+'</div>'
+   : '<div style="margin-top:8px;color:var(--muted)">Nothing published this day</div>';
+  showTip(e,h);
+ } else {
+  let best=null,bd=1e9; ORD.forEach(n=>{const d=Math.abs(NX(n)-px); if(d<bd){bd=d;best=n;}});
+  if(!best) return;
+  showTip(e,`<div class="td">${md(best.date)} \\u00b7 ${best.typL}</div>
+  <div style="font-weight:640;margin-bottom:7px">${best.title}</div>
+  <div class="tr"><span><i class="kd" style="background:var(--s4)"></i> Follows</span><b>${best.fol}</b></div>
+  <div class="tr"><span><i class="kd" style="background:var(--s1)"></i> Follow rate</span><b>${best.frS}/100 \\u00b7 ${best.frB}</b></div>
+  <div class="tr"><span><i class="kd" style="background:var(--s2)"></i> Profile visits</span><b>${best.pvS}/100 \\u00b7 ${best.pvB}</b></div>
+  <div class="tr"><span><i class="kd" style="background:var(--s3)"></i> Engagement</span><b>${best.erS}/100 \\u00b7 ${best.erB}</b></div>`);}
+});
+$('#main').addEventListener('mouseleave',()=>tip.style.opacity=0);
+
+$('#tv').innerHTML='<div class="tw"><table class="tv"><thead><tr><th>Post</th><th>Date</th><th>Followers</th><th>Views</th><th>Follows</th><th>Follow rate</th><th>Visits</th><th>Engagement</th></tr></thead><tbody>'
+ + ORD.map(n=>`<tr><td>${n.title}</td><td>${md(n.date)}</td><td>${fmt(SER[dayIdx[n.date]].f)}</td><td>${fmt(n.imp)}</td><td>${n.fol}</td><td>${n.frS}</td><td>${n.pvS}</td><td>${n.erS}</td></tr>`).join('')
+ + '</tbody></table></div>';
+
+const CFG={
+ fan:{s:'frS',b:'frB',bc:'frBc',algo:'fanAlgo',blog:'fanBlog',fix:'fanFix',l:'follow rate',
+  boxes:n=>[['Follows',n.fol],['Views',fmt(n.imp)],['Profile visits',n.pv],['Follows / views',n.frR+'%'],['Score',n.frS+'/100']]},
+ cov:{s:'pvS',b:'pvB',bc:'pvBc',algo:'covAlgo',blog:'covBlog',fix:'covFix',l:'profile visit rate',
+  boxes:n=>[['Visits / views',n.pvR+'%'],['Views',fmt(n.imp)],['Profile visits',n.pv],['Detail expands',n.det],['Score',n.pvS+'/100']]},
+ er:{s:'erS',b:'erB',bc:'erBc',algo:'erAlgo',blog:'erBlog',fix:'erFix',l:'engagement rate',
+  boxes:n=>[['Strict / views',n.strictR+'%'],['Likes',n.like],['Replies',n.rep],['Reposts',n.rt],['Bookmarks',n.bmk],['Score',n.erS+'/100']]}};
+let sortK='imp', sortD=-1;
+const COLS=[['title','Post'],['date','Date'],['imp','Views'],['fol','Follows'],['frS','Follow rate'],['pvS','Visits'],['erS','Engagement']];
+function overview(){
+ const rows=[...N].sort((a,b)=>{const A=a[sortK],Bv=b[sortK];
+   if(typeof A==='string') return sortD*(A<Bv?-1:A>Bv?1:0);
+   return sortD*(A-Bv)||b.imp-a.imp;});
+ $('#list').innerHTML='<div class="tw"><table class="ovw"><thead><tr>'+COLS.map(([k,l])=>
+   `<th data-k="${k}" data-on="${k===sortK?1:0}">${l}<span class="ar">${k===sortK?(sortD<0?'\\u25bc':'\\u25b2'):'\\u21c5'}</span></th>`).join('')
+  +'</tr></thead><tbody>'+rows.map(n=>`<tr>
+   <td class="t">${n.title}${n.thin?'<span class="tt">thin</span>':''}</td><td>${md(n.date)}</td>
+   <td>${fmt(n.imp)}</td><td>${n.fol}</td>
+   <td><span class="sc"><i class="chip ${n.frBc}"></i>${n.frS}</span></td>
+   <td><span class="sc"><i class="chip ${n.pvBc}"></i>${n.pvS}</span></td>
+   <td><span class="sc"><i class="chip ${n.erBc}"></i>${n.erS}</span></td></tr>`).join('')+'</tbody></table></div>';
+ document.querySelectorAll('.ovw th').forEach(th=>th.onclick=()=>{
+   const k=th.dataset.k; if(k===sortK) sortD=-sortD; else {sortK=k; sortD=(k==='title'||k==='date')?1:-1;}
+   overview();});
+}
+let detD=1, detK=null;
+function detail(k){
+ const c=CFG[k]; detK=k;
+ $('#sortbar').style.display='block';
+ $('#sortbar').innerHTML=`<button class="ctl" id="bDir">Sorted by ${c.l} score, ${detD>0?'high to low \\u25bc':'low to high \\u25b2'}</button>`;
+ $('#bDir').onclick=()=>{detD=-detD; detail(detK);};
+ const rows=[...N].sort((a,b)=> detD*(b[c.s]-a[c.s]) || b.imp-a.imp);
+ $('#list').innerHTML=rows.map((n,i)=>{
+  const a=AN[n.id]||{};
+  return `<div class="pcard"><div class="phead"><span class="rank">${i+1}</span>
+   <span class="ptit">${n.title}<span class="tt">${n.typL}</span>${n.thin?'<span class="tt">thin sample</span>':''}
+   <a class="plink" href="${n.url}" target="_blank" rel="noopener">open on X</a></span>
+   <span class="pdate">${md(n.date)}</span>
+   <span class="psc">${n[c.s]}<span class="of">/100</span></span><span class="pill ${n[c.bc]}">${n[c.b]}</span></div>
+   <div class="pbody"><div class="bmain">
+    <div class="dgrid">${c.boxes(n).map(([kk,vv])=>`<div class="dbox"><div class="k">${kk}</div><div class="v">${vv}</div></div>`).join('')}</div>
+    <div class="tagline">Algo analysis</div>${ul(a[c.algo])}
+    <div class="tagline" style="margin-top:12px">Professional influencer analysis</div>${ul(a[c.blog])}
+    <div class="tagline" style="margin-top:12px">Overall suggestion</div>${ul(a[c.fix])}
+   </div></div></div>`;}).join('');
+}
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
+ document.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-selected','false'));
+ t.setAttribute('aria-selected','true');
+ if(t.dataset.k==='ovw'){$('#sortbar').style.display='none';overview();}else detail(t.dataset.k);});
+overview();
+
+$('#sug').innerHTML='<h2>Overall suggestions</h2><p class="note">Ordered by leverage. Each names the number that triggered it, the algo basis and the influencer basis.</p>'+D.sug.map((s,i)=>
+ `<div class="srow"><span class="rank">${i+1}</span><div style="flex:1">
+  <div class="shead">${s.h}</div><div class="trig">${s.t}</div>
+  <ul>${s.p.map(x=>`<li>${x}</li>`).join('')}</ul><div class="src">${s.s}</div></div></div>`).join('');
+
+$('#bTheme').onclick=()=>{const d=document.documentElement.getAttribute('data-theme')==='dark';
+ document.documentElement.setAttribute('data-theme',d?'light':'dark');$('#bTheme').textContent=d?'Dark':'Light';drawMain();};
+</script></body></html>
