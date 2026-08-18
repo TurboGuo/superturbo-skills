@@ -1,0 +1,365 @@
+<!doctype html><html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>小红书算法专家 + 专业博主诊断</title><style>
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#f9f9f7}
+:root[data-theme="dark"] body{background:#0d0d0d}
+@media(prefers-color-scheme:dark){:root:where(:not([data-theme="light"])) body{background:#0d0d0d}}
+.viz-root{color-scheme:light;color:var(--ink1);background:var(--plane);min-height:100vh;
+ --plane:#f9f9f7;--surface:#fcfcfb;--ink1:#0b0b0b;--ink2:#52514e;--muted:#898781;
+ --grid:#e1e0d9;--axis:#c3c2b7;--ring:rgba(11,11,11,.10);
+ --s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#4a3aa7;--good:#0ca30c;--warn:#fab219;--bad:#d03b3b}
+@media(prefers-color-scheme:dark){:root:where(:not([data-theme="light"])) .viz-root{color-scheme:dark;
+ --plane:#0d0d0d;--surface:#1a1a19;--ink1:#fff;--ink2:#c3c2b7;--muted:#898781;
+ --grid:#2c2c2a;--axis:#383835;--ring:rgba(255,255,255,.10);--s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#9085e9}}
+:root[data-theme="dark"] .viz-root{color-scheme:dark;--plane:#0d0d0d;--surface:#1a1a19;--ink1:#fff;
+ --ink2:#c3c2b7;--muted:#898781;--grid:#2c2c2a;--axis:#383835;--ring:rgba(255,255,255,.10);
+ --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#9085e9}
+.wrap{max-width:1160px;margin:0 auto;padding:26px 20px 60px}
+header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+header>div{flex:1;min-width:280px}
+h1{font-size:20px;font-weight:650;margin:0}
+.sub{color:var(--muted);font-size:12px;margin:10px 0 0;line-height:1.6}
+.intro{margin:12px 0 0;padding-left:19px;max-width:960px}
+.intro li{font-size:14px;line-height:1.85;color:var(--ink2);margin:7px 0}
+.intro li b{color:var(--ink1);font-weight:650}
+.intro li::marker{color:var(--s1)}
+button.ctl{font:inherit;font-size:12.5px;padding:6px 12px;border-radius:7px;border:1px solid var(--ring);
+ background:var(--surface);color:var(--ink2);cursor:pointer}
+.r1{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0 12px}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+@media(max-width:520px){.r1,.r2{grid-template-columns:1fr}}
+.tile{background:var(--surface);border:1px solid var(--ring);border-radius:11px;padding:15px 16px}
+.tile .lbl{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:7px}
+.kd{width:9px;height:9px;border-radius:50%;flex:none;display:inline-block}
+.scoreRow{display:flex;align-items:baseline;gap:9px;margin-top:8px;flex-wrap:wrap}
+.score{font-size:34px;font-weight:650;line-height:1}
+.of{font-size:15px;color:var(--muted);font-weight:500}
+.pill{font-size:11.5px;font-weight:650;padding:3px 9px;border-radius:6px;color:#fff}
+.pill.good{background:var(--good)}.pill.mid{background:var(--warn);color:#3a2c00}.pill.weak{background:var(--bad)}
+.tile .raw{font-size:12.5px;color:var(--ink2);margin-top:9px;font-variant-numeric:tabular-nums}
+.tile .base{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.55}
+.card{background:var(--surface);border:1px solid var(--ring);border-radius:12px;padding:16px 18px 12px;margin-bottom:14px}
+.card h2{font-size:15px;font-weight:640;margin:0 0 3px}
+.card .note{font-size:12px;color:var(--muted);margin:0 0 12px;line-height:1.6}
+.legend{display:flex;gap:15px;flex-wrap:wrap;font-size:12.5px;color:var(--ink2);margin:0 0 8px}
+.legend span{display:flex;align-items:center;gap:7px}
+.key{width:15px;border-radius:1px;flex:none}
+svg{display:block;width:100%;overflow:visible}
+.tick{font-size:10.5px;fill:var(--muted);font-variant-numeric:tabular-nums}
+.dlab{font-size:11.5px;font-weight:640;font-variant-numeric:tabular-nums;fill:var(--ink1)}
+.ptitle{font-size:11.5px;fill:var(--ink2);font-weight:600}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:2px 0 14px}
+.tab{font:inherit;font-size:13px;padding:8px 14px;border-radius:8px;border:1px solid var(--ring);
+ background:var(--plane);color:var(--ink2);cursor:pointer}
+.tab[aria-selected="true"]{background:var(--surface);color:var(--ink1);font-weight:640;border-color:var(--axis)}
+/* 总览排序表 */
+.ovw{width:100%;border-collapse:collapse;font-size:12.5px}
+.ovw th{font-size:11.5px;color:var(--muted);font-weight:600;text-align:right;padding:8px 9px;
+ border-bottom:1px solid var(--axis);cursor:pointer;white-space:nowrap;user-select:none}
+.ovw th:first-child,.ovw td:first-child{text-align:left}
+.ovw th:hover{color:var(--ink1)}
+.ovw th .ar{color:var(--muted);font-size:9px;margin-left:3px}
+.ovw th[data-on="1"]{color:var(--ink1)}
+.ovw td{text-align:right;padding:9px;border-bottom:1px solid var(--grid);font-variant-numeric:tabular-nums}
+.ovw td.t{font-weight:600;max-width:330px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sc{display:inline-flex;align-items:center;gap:6px;justify-content:flex-end}
+.chip{width:8px;height:8px;border-radius:2px;flex:none}
+.chip.good{background:var(--good)}.chip.mid{background:var(--warn)}.chip.weak{background:var(--bad)}
+/* 逐篇卡片 */
+.pcard{border-top:1px solid var(--grid);padding:16px 2px}
+.pcard:first-child{border-top:none;padding-top:4px}
+.phead{display:flex;align-items:center;gap:11px;margin-bottom:11px}
+.rank{width:24px;height:24px;border-radius:50%;background:var(--plane);border:1px solid var(--ring);
+ display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:650;color:var(--ink2);flex:none}
+.ptit{flex:1;font-size:13.5px;font-weight:640;min-width:0}
+.pdate{font-size:11.5px;color:var(--muted);flex:none;font-variant-numeric:tabular-nums}
+.psc{font-size:19px;font-weight:650;font-variant-numeric:tabular-nums;flex:none}
+.pbody{display:flex;gap:16px;flex-wrap:wrap;padding-left:35px}
+.cov{width:148px;flex:none}
+.cov img{width:100%;border-radius:8px;border:1px solid var(--ring);display:block}
+.cov .cap{font-size:10.5px;color:var(--muted);margin-top:6px;line-height:1.5}
+.bmain{flex:1;min-width:300px}
+.dgrid{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:11px}
+.dbox{background:var(--plane);border:1px solid var(--ring);border-radius:8px;padding:7px 11px;min-width:86px}
+.dbox .k{font-size:10.5px;color:var(--muted)}
+.dbox .v{font-size:15px;font-weight:640;font-variant-numeric:tabular-nums;margin-top:3px}
+.blk{font-size:13.5px;line-height:1.8;color:var(--ink2);margin:6px 0 0;padding-left:18px}
+.blk li{margin:5px 0}
+.blk li::marker{color:var(--muted)}
+.tagline{font-weight:600}
+.tagline{font-size:11.5px;color:var(--muted);margin-bottom:3px;letter-spacing:.03em}
+/* tooltip 不透明 */
+.tip{position:fixed;pointer-events:none;z-index:60;background:#fcfcfb;border:1px solid var(--axis);
+ border-radius:9px;padding:11px 13px;font-size:12px;color:#0b0b0b;max-width:330px;
+ box-shadow:0 10px 30px rgba(0,0,0,.26);opacity:0;transition:opacity .09s}
+:root[data-theme="dark"] .tip{background:#232322;border-color:#4a4a46;color:#fff;box-shadow:0 10px 30px rgba(0,0,0,.6)}
+@media(prefers-color-scheme:dark){:root:where(:not([data-theme="light"])) .tip{background:#232322;border-color:#4a4a46;color:#fff;box-shadow:0 10px 30px rgba(0,0,0,.6)}}
+.tip .td{font-size:11px;color:var(--muted);margin-bottom:6px}
+.tip .tr{display:flex;justify-content:space-between;gap:16px;margin:3px 0;font-variant-numeric:tabular-nums}
+details{margin-top:10px}summary{font-size:12.5px;color:var(--ink2);cursor:pointer;padding:6px 0}
+table.tv{width:100%;border-collapse:collapse;font-size:11.5px;font-variant-numeric:tabular-nums;margin-top:8px}
+table.tv th,table.tv td{text-align:right;padding:5px 7px;border-bottom:1px solid var(--grid)}
+table.tv th:first-child,table.tv td:first-child{text-align:left;font-variant-numeric:normal}
+table.tv th{color:var(--muted);font-weight:600}
+.sug .srow{display:flex;gap:13px;padding:15px 0;border-top:1px solid var(--grid)}
+.sug .srow:first-of-type{border-top:none;padding-top:4px}
+.shead{font-size:13.5px;font-weight:645;line-height:1.5;margin-bottom:7px}
+.trig{font-size:11.5px;color:var(--ink2);background:var(--plane);border:1px solid var(--ring);
+ border-radius:6px;padding:7px 10px;margin-bottom:8px;line-height:1.65}
+.trig b{font-variant-numeric:tabular-nums;color:var(--ink1)}
+.sug ul{margin:0;padding-left:17px;font-size:12.5px;color:var(--ink2);line-height:1.75}
+.src{font-size:11px;color:var(--muted);margin-top:8px;line-height:1.6}
+.src a{color:var(--muted)}
+.demolbl{font-size:11.5px;color:var(--muted);margin:13px 0 -2px;letter-spacing:.03em}
+.demo{display:flex;gap:14px;flex-wrap:wrap;margin:9px 0 4px}
+.dm{width:118px}
+.dmslot{height:157px;display:flex;align-items:center}
+.dmbox{width:118px;height:157px;border-radius:7px;border:1px solid var(--ring);overflow:hidden;position:relative;
+ display:flex;flex-direction:column;justify-content:center;padding:9px}
+.dmbox.wide{height:47px}
+.dmcap{font-size:10.5px;line-height:1.5;margin-top:6px;color:var(--ink2)}
+.dmcap .yes{color:var(--good);font-weight:700}
+.dmcap .no{color:var(--bad);font-weight:700}
+.shot{position:absolute;inset:0;background:
+ repeating-linear-gradient(0deg,#e8e8e4 0 3px,transparent 3px 9px) 0 0/100% 60%,
+ linear-gradient(#f3f3f0,#f3f3f0);background-repeat:no-repeat}
+.dense{position:absolute;inset:0;background:repeating-linear-gradient(0deg,#d8d8d3 0 2px,#fbfbf9 2px 6px)}
+.bigred{position:relative;z-index:2;font-weight:800;font-size:13px;line-height:1.35;color:#e0332e;
+ text-align:center;letter-spacing:.5px}
+.bigink{position:relative;z-index:2;font-weight:800;font-size:13px;line-height:1.4;color:#2a2a28;text-align:center}
+.plainbg{position:absolute;inset:0;background:#efeadf}
+.blurred{filter:blur(.6px);opacity:.88}
+.crop{position:absolute;top:0;bottom:0;width:22%;background:repeating-linear-gradient(45deg,rgba(208,59,59,.16) 0 5px,transparent 5px 10px)}
+.crop.l{left:0}.crop.r{right:0}
+.foot{font-size:11.5px;color:var(--muted);line-height:1.75;margin-top:20px}
+.foot b{color:var(--ink2);font-weight:650}
+</style></head><body><div class="viz-root"><div class="wrap">
+<header><div><h1 id="h1"></h1>
+<ul class="intro">
+<li><b>算法专家诊断：</b>依据公开的小红书分发机制建模：CES 综合评分（关注 8 分、评论与转发各 4 分、点赞与收藏各 1 分）、流量池分层晋级与冷启动门槛、封面点击率闸门、停留时长与完读率权重、搜索流量的关键词五位布局。机制与系数来自第三方运营分析，非官方口径。</li>
+<li><b>专业博主诊断：</b>综合公开的博主实操复盘与平台数据基准，覆盖封面与标题实测、转粉率提升、笔记重发等一线经验。外部数字均可追到页脚列出的来源。</li>
+</ul>
+<p class="sub" id="sub"></p></div>
+<button class="ctl" id="bTheme">深色</button></header>
+
+<div class="r1" id="row1"></div>
+<div class="r2" id="row2"></div>
+
+<div class="card">
+  <h2>总粉丝与每篇表现</h2>
+  <p class="note">最上面的粗线是粉丝总数，下面三格细线是每篇笔记的涨粉量和三项得分，共用同一条日期轴。同一天发多篇时点会横向错开。鼠标移上去看当天或该篇的详情。</p>
+  <div class="legend">
+    <span><i class="key" style="background:var(--s1);height:3px"></i>粉丝总数</span>
+    <span><i class="key" style="background:var(--s4);height:2px"></i>涨粉量</span>
+    <span><i class="key" style="background:var(--s1);height:2px"></i>粉丝转化率</span>
+    <span><i class="key" style="background:var(--s2);height:2px"></i>标题封面吸引力</span>
+    <span><i class="key" style="background:var(--s3);height:2px"></i>内容吸引力</span>
+  </div>
+  <svg id="main" viewBox="0 0 1000 436" role="img" aria-label="总粉丝曲线与每篇笔记的涨粉量及三项得分"></svg>
+  <details><summary>表格视图</summary><div id="tv"></div></details>
+</div>
+
+<div class="card">
+  <h2>逐篇分析</h2>
+  <p class="note">默认是涨粉总览，点表头可以排序。后面三个标签是分维度的详细分析，全部直接展开。</p>
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" data-k="ovw" aria-selected="true">涨粉总览</button>
+    <button class="tab" role="tab" data-k="fan" aria-selected="false">粉丝转化率分析</button>
+    <button class="tab" role="tab" data-k="cov" aria-selected="false">标题封面吸引力分析</button>
+    <button class="tab" role="tab" data-k="con" aria-selected="false">内容吸引力分析</button>
+  </div>
+  <div id="sortbar" style="display:none;margin:-4px 0 12px"></div>
+  <div id="list"></div>
+</div>
+
+<div class="card sug" id="sug"></div>
+
+<div class="foot" id="foot"></div>
+</div></div><div class="tip" id="tip"></div>
+<script>
+const D={"meta": {"title": "小红书算法专家 + 专业博主诊断", "subtitle": "统计口径：2026 年 8 月 2 日至 8 月 15 日 · 7 篇笔记 · 曝光 24,700 · 观看 5,722", "folRaw": "该时段新增关注，共 7 篇笔记", "folBase": "其中 5 篇有涨粉，2 篇为 0", "footnotes": [{"k": "口径。", "v": "粉丝转化率 = 涨粉 ÷ 曝光，标题封面吸引力 = 观看 ÷ 曝光，内容吸引力 = 涨粉 ÷ 观看。三者是恒等关系：粉丝转化率 = 标题封面吸引力 × 内容吸引力，23.2% × 0.472% = 0.11%，可验算。"}, {"k": "百分制怎么来的。", "v": "三档基准全部锚定外部数据，不用账号内排名。分段线性映射：0 到中等线映射到 0 至 40 分，中等线到良好线映射到 40 至 70 分，良好线到优秀线映射到 70 至 100 分。标题封面的中等/良好/优秀线是 10% / 20% / 30%，来自平台点击率均值 11% 与优秀线 25%；内容吸引力是 0.5% / 1.5% / 3.0%，来自转粉率低于 0.5% 判定为关注引导缺失、知识类初期 1.5% 算不错、健康值 3%；粉丝转化率的 0.05% / 0.30% / 0.90% 由前两者相乘推导。"}, {"k": "粉丝曲线的做法。", "v": "导出表没有粉丝时间序列，曲线以今天真实的 820 为锚点倒推，每篇的累计涨粉记在首发日。总量准确，单日时点是近似。"}, {"k": "日期。", "v": "用导出表的首次发布时间，是北京时间，所以部分笔记可能比你记忆中的发布日晚一天。"}, {"k": "剔除项。", "v": "导出表里有 1 篇标题为空，无法定位到具体笔记，已从全部统计与排名中剔除（合计曝光 400、涨粉 0）。建议去后台把真实标题补回。"}, {"k": "数据来源。", "v": "示例-笔记列表明细表.xlsx，处理于 2026-08-17。"}], "dropped": [{"dt": "2026年08月03日08时00分00秒", "imp": 400, "fol": 0}]}, "acc": {"imp": 24700, "views": 5722, "fol": 27, "fanR": 0.109, "covR": 23.2, "conR": 0.472, "fanS": 47, "covS": 80, "conS": 38, "fanB": "中等", "fanBc": "mid", "covB": "良好", "covBc": "good", "conB": "较弱", "conBc": "weak"}, "notes": [{"key": "0", "title": "开箱一个新牌子", "date": "2026-08-04", "hour": 10, "fmt": "图文", "imp": 900, "views": 62, "fol": 0, "like": 5, "cmt": 0, "save": 1, "shr": 0, "dwell": 5, "fanR": 0.0, "covR": 6.9, "conR": 0.0, "fanS": 0, "covS": 28, "conS": 0, "coverKey": null, "ratio": null, "coverDesc": "", "ces": 6, "cesK": 6.7, "fanB": "较弱", "fanBc": "weak", "covB": "较弱", "covBc": "weak", "conB": "较弱", "conBc": "weak"}, {"key": "1", "title": "聊聊最近的美妆行业", "date": "2026-08-06", "hour": 11, "fmt": "图文", "imp": 1500, "views": 140, "fol": 0, "like": 9, "cmt": 2, "save": 3, "shr": 0, "dwell": 6, "fanR": 0.0, "covR": 9.3, "conR": 0.0, "fanS": 0, "covS": 37, "conS": 0, "coverKey": null, "ratio": null, "coverDesc": "", "ces": 20, "cesK": 13.3, "fanB": "较弱", "fanBc": "weak", "covB": "较弱", "covBc": "weak", "conB": "较弱", "conBc": "weak"}, {"key": "2", "title": "这个粉底液真的绝了", "date": "2026-08-08", "hour": 13, "fmt": "图文", "imp": 9800, "views": 2900, "fol": 1, "like": 120, "cmt": 8, "save": 9, "shr": 31, "dwell": 11, "fanR": 0.01, "covR": 29.6, "conR": 0.034, "fanS": 8, "covS": 99, "conS": 3, "coverKey": null, "ratio": null, "coverDesc": "", "ces": 293, "cesK": 29.9, "fanB": "较弱", "fanBc": "weak", "covB": "良好", "covBc": "good", "conB": "较弱", "conBc": "weak"}, {"key": "3", "title": "敏感肌急救三步法", "date": "2026-08-10", "hour": 20, "fmt": "图文", "imp": 1800, "views": 320, "fol": 4, "like": 33, "cmt": 4, "save": 38, "shr": 3, "dwell": 19, "fanR": 0.222, "covR": 17.8, "conR": 1.25, "fanS": 61, "covS": 63, "conS": 62, "coverKey": null, "ratio": null, "coverDesc": "", "ces": 131, "cesK": 72.8, "fanB": "中等", "fanBc": "mid", "covB": "中等", "covBc": "mid", "conB": "中等", "conBc": "mid"}, {"key": "4", "title": "我为什么放弃了贵妇面霜", "date": "2026-08-12", "hour": 21, "fmt": "图文", "imp": 2400, "views": 430, "fol": 3, "like": 41, "cmt": 19, "save": 12, "shr": 4, "dwell": 25, "fanR": 0.125, "covR": 17.9, "conR": 0.698, "fanS": 49, "covS": 64, "conS": 46, "coverKey": null, "ratio": null, "coverDesc": "", "ces": 169, "cesK": 70.4, "fanB": "中等", "fanBc": "mid", "covB": "中等", "covBc": "mid", "conB": "中等", "conBc": "mid"}, {"key": "5", "title": "油皮夏天怎么选防晒", "date": "2026-08-14", "hour": 9, "fmt": "图文", "imp": 3100, "views": 690, "fol": 8, "like": 54, "cmt": 6, "save": 61, "shr": 7, "dwell": 21, "fanR": 0.258, "covR": 22.3, "conR": 1.159, "fanS": 65, "covS": 77, "conS": 60, "coverKey": null, "ratio": null, "coverDesc": "", "ces": 231, "cesK": 74.5, "fanB": "中等", "fanBc": "mid", "covB": "良好", "covBc": "good", "conB": "中等", "conBc": "mid"}, {"key": "6", "title": "新手化妆最容易踩的5个坑", "date": "2026-08-14", "hour": 20, "fmt": "图文", "imp": 5200, "views": 1180, "fol": 11, "like": 88, "cmt": 14, "save": 72, "shr": 9, "dwell": 18, "fanR": 0.212, "covR": 22.7, "conR": 0.932, "fanS": 59, "covS": 78, "conS": 53, "coverKey": null, "ratio": null, "coverDesc": "", "ces": 340, "cesK": 65.4, "fanB": "中等", "fanBc": "mid", "covB": "良好", "covBc": "good", "conB": "中等", "conBc": "mid"}], "series": [{"d": "2026-08-02", "f": 793, "n": 0, "list": []}, {"d": "2026-08-03", "f": 793, "n": 0, "list": []}, {"d": "2026-08-04", "f": 793, "n": 1, "list": [{"t": "开箱一个新牌子", "f": 0}]}, {"d": "2026-08-05", "f": 793, "n": 0, "list": []}, {"d": "2026-08-06", "f": 793, "n": 1, "list": [{"t": "聊聊最近的美妆行业", "f": 0}]}, {"d": "2026-08-07", "f": 793, "n": 0, "list": []}, {"d": "2026-08-08", "f": 794, "n": 1, "list": [{"t": "这个粉底液真的绝了", "f": 1}]}, {"d": "2026-08-09", "f": 794, "n": 0, "list": []}, {"d": "2026-08-10", "f": 798, "n": 1, "list": [{"t": "敏感肌急救三步法", "f": 4}]}, {"d": "2026-08-11", "f": 798, "n": 0, "list": []}, {"d": "2026-08-12", "f": 801, "n": 1, "list": [{"t": "我为什么放弃了贵妇面霜", "f": 3}]}, {"d": "2026-08-13", "f": 801, "n": 0, "list": []}, {"d": "2026-08-14", "f": 820, "n": 2, "list": [{"t": "油皮夏天怎么选防晒", "f": 8}, {"t": "新手化妆最容易踩的5个坑", "f": 11}]}, {"d": "2026-08-15", "f": 820, "n": 0, "list": []}], "analysis": {"开箱一个新牌子": {"fanAlgo": ["样本量不足，无法评估。观看仅 62 次。"], "fanBlog": ["前半段 28 分、后半段 0 分，瓶颈在关注转化。"], "fanFix": ["修改：先定位死在第几关，只改那一关，不要全盘重做。"], "covAlgo": ["观看/曝光 6.9%，低于平台均值 11%，停在最小流量池。"], "covBlog": ["人均观看 5 秒，封面与标题的承诺没兑现，点进来的人很快就走。"], "covFix": ["修改：改成 3:4 竖版，大字落在留白处，按新笔记重发。"], "conAlgo": ["样本量不足，无法评估。"], "conBlog": ["收藏 1 个，收藏率 1.61%，缺少值得收藏的干货。"], "conFix": ["修改：正文改成编号清单，结尾给一个具体的关注理由。"]}, "聊聊最近的美妆行业": {"fanAlgo": ["涨粉/曝光 0.0%，得 0 分。曝光 1,500，观看 140，涨粉 0。", "CES 结构：9 赞 3 藏 2 评 0 关，评论与转发按 4 分、关注按 8 分计。"], "fanBlog": ["前半段 37 分、后半段 0 分，瓶颈在关注转化。"], "fanFix": ["修改：先定位死在第几关，只改那一关，不要全盘重做。"], "covAlgo": ["观看/曝光 9.3%，低于平台均值 11%，停在最小流量池。"], "covBlog": ["人均观看 6 秒，封面与标题的承诺没兑现，点进来的人很快就走。"], "covFix": ["修改：改成 3:4 竖版，大字落在留白处，按新笔记重发。"], "conAlgo": ["涨粉/观看 0.0%，低于 0.5% 的关注引导缺失线。"], "conBlog": ["收藏 3 个，收藏率 2.14%，缺少值得收藏的干货。"], "conFix": ["修改：正文改成编号清单，结尾给一个具体的关注理由。"]}, "这个粉底液真的绝了": {"fanAlgo": ["涨粉/曝光 0.01%，得 8 分。曝光 9,800，观看 2,900，涨粉 1。", "CES 结构：120 赞 9 藏 8 评 1 关，评论与转发按 4 分、关注按 8 分计。"], "fanBlog": ["前半段 99 分、后半段 3 分，瓶颈在关注转化。"], "fanFix": ["修改：先定位死在第几关，只改那一关，不要全盘重做。"], "covAlgo": ["观看/曝光 29.6%，高于平台均值 11%，已过冷启动闸门。"], "covBlog": ["人均观看 11 秒，封面与标题的承诺兑现了。"], "covFix": ["保持：这张封面的样式可以固化成模板。"], "conAlgo": ["涨粉/观看 0.034%，低于 0.5% 的关注引导缺失线。"], "conBlog": ["收藏 9 个，收藏率 0.31%，缺少值得收藏的干货。"], "conFix": ["修改：正文改成编号清单，结尾给一个具体的关注理由。"]}, "敏感肌急救三步法": {"fanAlgo": ["涨粉/曝光 0.222%，得 61 分。曝光 1,800，观看 320，涨粉 4。", "CES 结构：33 赞 38 藏 4 评 4 关，评论与转发按 4 分、关注按 8 分计。"], "fanBlog": ["前半段 63 分、后半段 62 分，瓶颈在关注转化。"], "fanFix": ["保持：把这个组合固定下来，作为后续选题的参照。"], "covAlgo": ["观看/曝光 17.8%，高于平台均值 11%，已过冷启动闸门。"], "covBlog": ["人均观看 19 秒，封面与标题的承诺兑现了。"], "covFix": ["保持：这张封面的样式可以固化成模板。"], "conAlgo": ["涨粉/观看 1.25%，高于 0.5% 的关注引导缺失线。"], "conBlog": ["收藏 38 个，收藏率 11.88%，实用价值够。"], "conFix": ["保持：末屏补一句具体的下期预告。"]}, "我为什么放弃了贵妇面霜": {"fanAlgo": ["涨粉/曝光 0.125%，得 49 分。曝光 2,400，观看 430，涨粉 3。", "CES 结构：41 赞 12 藏 19 评 3 关，评论与转发按 4 分、关注按 8 分计。"], "fanBlog": ["前半段 64 分、后半段 46 分，瓶颈在关注转化。"], "fanFix": ["保持：把这个组合固定下来，作为后续选题的参照。"], "covAlgo": ["观看/曝光 17.9%，高于平台均值 11%，已过冷启动闸门。"], "covBlog": ["人均观看 25 秒，封面与标题的承诺兑现了。"], "covFix": ["保持：这张封面的样式可以固化成模板。"], "conAlgo": ["涨粉/观看 0.698%，高于 0.5% 的关注引导缺失线。"], "conBlog": ["收藏 12 个，收藏率 2.79%，缺少值得收藏的干货。"], "conFix": ["保持：末屏补一句具体的下期预告。"]}, "油皮夏天怎么选防晒": {"fanAlgo": ["涨粉/曝光 0.258%，得 65 分。曝光 3,100，观看 690，涨粉 8。", "CES 结构：54 赞 61 藏 6 评 8 关，评论与转发按 4 分、关注按 8 分计。"], "fanBlog": ["前半段 77 分、后半段 60 分，瓶颈在关注转化。"], "fanFix": ["保持：把这个组合固定下来，作为后续选题的参照。"], "covAlgo": ["观看/曝光 22.3%，高于平台均值 11%，已过冷启动闸门。"], "covBlog": ["人均观看 21 秒，封面与标题的承诺兑现了。"], "covFix": ["保持：这张封面的样式可以固化成模板。"], "conAlgo": ["涨粉/观看 1.159%，高于 0.5% 的关注引导缺失线。"], "conBlog": ["收藏 61 个，收藏率 8.84%，实用价值够。"], "conFix": ["保持：末屏补一句具体的下期预告。"]}, "新手化妆最容易踩的5个坑": {"fanAlgo": ["涨粉/曝光 0.212%，得 59 分。曝光 5,200，观看 1,180，涨粉 11。", "CES 结构：88 赞 72 藏 14 评 11 关，评论与转发按 4 分、关注按 8 分计。"], "fanBlog": ["前半段 78 分、后半段 53 分，瓶颈在关注转化。"], "fanFix": ["保持：把这个组合固定下来，作为后续选题的参照。"], "covAlgo": ["观看/曝光 22.7%，高于平台均值 11%，已过冷启动闸门。"], "covBlog": ["人均观看 18 秒，封面与标题的承诺兑现了。"], "covFix": ["保持：这张封面的样式可以固化成模板。"], "conAlgo": ["涨粉/观看 0.932%，高于 0.5% 的关注引导缺失线。"], "conBlog": ["收藏 72 个，收藏率 6.10%，实用价值够。"], "conFix": ["保持：末屏补一句具体的下期预告。"]}}, "thumbs": {}, "sug": [{"h": "每篇末屏写一句下期预告，主页简介改成带数字的承诺", "t": "内容吸引力 <b>38 分（较弱）</b>，转粉率 <b>0.472%</b>，接近 0.5% 的关注引导缺失线。7 篇里 <b>2 篇涨粉为 0</b>。", "p": ["末屏不要写「关注我」，要写具体的下一期是什么。", "主页简介换成带数字的承诺句式。", "发布后 20 分钟内自己在评论区补一条，会自动置顶。"], "s": "算法依据：CES 里关注权重 8 分，评论与转发各 4 分，是点赞收藏的 4 到 8 倍。实操依据：<a href=\"https://www.jzl.com/news/xhs-12\">极致了 涨粉实战指南</a> 指出关注转化率低于 1% 时应优先改主页与引导而非选题。"}, {"h": "封面统一成 3:4 竖版，大字必须落在留白上", "t": "标题封面 <b>80 分（良好）</b>整体不差，但最低的两篇只有 <b>6.9%</b> 和 <b>9.3%</b>，都踩在限流红线附近。", "p": ["只用两种：真实截图加大字落在留白处，或纯色底加三行黑字。", "禁止超宽横图，双列信息流会裁掉两头。", "红字压深色图或密集文字时，先垫一块白色色块。"], "s": "算法依据：封面点击率是流量池晋级的第一道闸门，低于 5% 需要立即优化，平台均值约 11%。实操依据：<a href=\"https://www.wangchenyu.com/tuiguang/155806.html\">王尘宇 素人号复盘</a> 实测约 40 篇后的结论是封面要么极简白底大字、要么极具体的截图带标注。", "demo": "<div class=\"demolbl\">以下两种一律不要做</div><div class=\"demo\"><div class=\"dm\"><div class=\"dmslot\"><div class=\"dmbox\"><div class=\"dense\"></div><div class=\"bigred blurred\">开箱一个<br>新牌子</div></div></div><div class=\"dmcap\"><span class=\"no\">✗</span> 红字压在密集小字上，缩略图下糊掉。点击率 6.9%</div></div><div class=\"dm\"><div class=\"dmslot\"><div class=\"dmbox wide\"><div class=\"shot\"></div><div class=\"crop l\"></div><div class=\"crop r\"></div><div class=\"bigred\" style=\"font-size:10px\">聊聊美妆行业</div></div></div><div class=\"dmcap\"><span class=\"no\">✗</span> 2.40:1 超宽横图，双列流里两头被裁。点击率 9.3%</div></div></div>"}, {"h": "把高收藏低涨粉的笔记换封面重发", "t": "「新手化妆最容易踩的5个坑」收藏率 <b>6.10%</b>，内容价值没问题，但同期最差的两篇点击率不到 <b>10%</b>，说明包装是短板。", "p": ["按新笔记重发，不是编辑旧笔记，编辑不会重新进流量池。", "封面换成纯色底三行大字，标题不用改。", "正文改成编号清单，让扫读也能看到结构。"], "s": "实操依据：<a href=\"https://www.520zimeiti.cn/48448.html\">笺卷凌烟阁 数据诊断</a> 的案例里，一篇点击率 3.5%、几乎不涨粉的笔记，只改封面和标题后重发，一周曝光 15 万、单篇涨粉 1200。"}]}, ACC=D.acc, N=D.notes, AN=D.analysis, TH=D.thumbs||{}, SER=D.series, META=D.meta;
+document.getElementById('h1').textContent=META.title;
+document.title=META.title;
+document.getElementById('sub').textContent=META.subtitle;
+document.getElementById('foot').innerHTML=(META.footnotes||[]).map(f=>`<b>${f.k}</b>${f.v}`).join('<br>');
+const $=s=>document.querySelector(s), fmt=n=>Math.round(n).toLocaleString('zh-CN');
+const ns=(t,a)=>{const e=document.createElementNS('http://www.w3.org/2000/svg',t);for(const k in a)e.setAttribute(k,a[k]);return e;};
+const clr=e=>{while(e.firstChild)e.removeChild(e.firstChild)};
+const ul=a=>a&&a.length?'<ul class="blk">'+a.map(x=>`<li>${x}</li>`).join('')+'</ul>':'<div class="blk">—</div>';
+const md=s=>{const p=s.split('-');return (+p[1])+'月'+(+p[2])+'日'};
+
+/* ── 顶部：第一行 涨粉量 + 粉丝转化率；第二行 封面 + 内容 ── */
+const tile=t=>`<div class="tile"><div class="lbl">${t.c?`<i class="kd" style="background:${t.c}"></i>`:''}${t.l}</div>
+ <div class="scoreRow"><span class="score">${t.v}</span>${t.of?'<span class="of">/100</span>':''}
+ ${t.b?`<span class="pill ${t.bc}">${t.b}</span>`:''}</div>
+ <div class="raw">${t.raw}</div>${t.base?`<div class="base">${t.base}</div>`:''}</div>`;
+$('#row1').innerHTML=
+ tile({l:'绝对涨粉量',v:ACC.fol,of:0,raw:META.folRaw,base:META.folBase})
++tile({c:'var(--s1)',l:'粉丝转化率（涨粉 / 曝光）',v:ACC.fanS,of:1,b:ACC.fanB,bc:ACC.fanBc,
+ raw:`${ACC.fanR}% ｜ ${ACC.fol} 涨粉 / ${fmt(ACC.imp)} 曝光`,
+ base:'基准：良好 ≥0.30%，中等 0.05% 至 0.30%，较弱 <0.05%'});
+$('#row2').innerHTML=
+ tile({c:'var(--s2)',l:'标题封面吸引力（观看 / 曝光）',v:ACC.covS,of:1,b:ACC.covB,bc:ACC.covBc,
+  raw:`${ACC.covR}% ｜ ${fmt(ACC.views)} 观看 / ${fmt(ACC.imp)} 曝光`,
+  base:'基准：良好 ≥20%，中等 10% 至 20%，较弱 <10%（平台均值约 11%）'})
++tile({c:'var(--s3)',l:'内容吸引力（涨粉 / 观看）',v:ACC.conS,of:1,b:ACC.conB,bc:ACC.conBc,
+  raw:`${ACC.conR.toFixed(3)}% ｜ ${ACC.fol} 涨粉 / ${fmt(ACC.views)} 观看`,
+  base:'基准：良好 ≥1.5%，中等 0.5% 至 1.5%，较弱 <0.5%'});
+
+/* ── 合并图：粗线 + 三格细线，共用日期轴 ── */
+const W=1000, M={l:52,r:124,t:16,b:40};
+const PW=W-M.l-M.r, ND=SER.length;
+const dx=i=>M.l+(i/(ND-1))*PW;
+const dayIdx={}; SER.forEach((r,i)=>dayIdx[r.d]=i);
+const ORD=[...N].sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:0);
+// 同日多篇横向错开
+const perDay={}; ORD.forEach(n=>(perDay[n.date]=perDay[n.date]||[]).push(n));
+const nxm=new Map();
+Object.entries(perDay).forEach(([d,arr])=>{
+  const c=dx(dayIdx[d]), slot=PW/(ND-1), w=slot*0.8;
+  arr.forEach((n,j)=>{ nxm.set(n, arr.length===1 ? c : c-w/2+(j/(arr.length-1))*w); });});
+const NX=n=>{const v=nxm.get(n); if(v===undefined) throw new Error('缺少坐标: '+n.title); return v;};
+const H1=132,H2=62,H3=126,G=16;
+const Y1=M.t, Y2=Y1+H1+G+14, Y3=Y2+H2+G+14;
+function drawMain(){
+ const svg=$('#main'); clr(svg);
+ const lab=(x,y,t)=>{const e=ns('text',{x,y,class:'ptitle'});e.textContent=t;svg.appendChild(e);};
+ // 面板1 粉丝总数（粗）
+ const fv=SER.map(r=>r.f), mn=Math.min(...fv), mx=Math.max(...fv);
+ const sp=Math.max((mx-mn)*1.6,10), mid=(mn+mx)/2, lo1=mid-sp/2, hi1=mid+sp/2;
+ const y1=v=>Y1+H1-(v-lo1)/(hi1-lo1)*H1;
+ lab(M.l,Y1-4,'粉丝总数');
+ [lo1,mid,hi1].forEach(t=>{svg.appendChild(ns('line',{x1:M.l,x2:M.l+PW,y1:y1(t),y2:y1(t),stroke:'var(--grid)','stroke-width':1}));
+  const e=ns('text',{x:M.l-9,y:y1(t)+3.5,'text-anchor':'end',class:'tick'});e.textContent=fmt(t);svg.appendChild(e);});
+ svg.appendChild(ns('path',{d:fv.map((v,i)=>(i?'L':'M')+dx(i).toFixed(1)+' '+y1(v).toFixed(1)).join(' '),
+   fill:'none',stroke:'var(--s1)','stroke-width':3.5,'stroke-linejoin':'round','stroke-linecap':'round'}));
+ const eL=ns('text',{x:M.l+PW+9,y:y1(fv[ND-1])+4,class:'dlab'});eL.textContent=fmt(fv[ND-1]);svg.appendChild(eL);
+ svg.appendChild(ns('circle',{cx:dx(ND-1),cy:y1(fv[ND-1]),r:5,fill:'var(--s1)',stroke:'var(--surface)','stroke-width':2}));
+ // 面板2 涨粉量（细）
+ const fmax=Math.max(2,...ORD.map(n=>n.fol));
+ const y2=v=>Y2+H2-v/fmax*H2;
+ lab(M.l,Y2-4,'每篇涨粉量');
+ [0,fmax].forEach(t=>{svg.appendChild(ns('line',{x1:M.l,x2:M.l+PW,y1:y2(t),y2:y2(t),stroke:'var(--grid)','stroke-width':1}));
+  const e=ns('text',{x:M.l-9,y:y2(t)+3.5,'text-anchor':'end',class:'tick'});e.textContent=t;svg.appendChild(e);});
+ svg.appendChild(ns('path',{d:ORD.map((n,i)=>(i?'L':'M')+NX(n).toFixed(1)+' '+y2(n.fol).toFixed(1)).join(' '),
+   fill:'none',stroke:'var(--s4)','stroke-width':1.6,'stroke-linejoin':'round','stroke-linecap':'round'}));
+ ORD.forEach(n=>svg.appendChild(ns('circle',{cx:NX(n),cy:y2(n.fol),r:3.2,fill:'var(--s4)',stroke:'var(--surface)','stroke-width':1.6})));
+ // 面板3 三项得分（细）
+ const y3=v=>Y3+H3-v/100*H3;
+ lab(M.l,Y3-4,'三项得分');
+ [0,40,70,100].forEach(t=>{svg.appendChild(ns('line',{x1:M.l,x2:M.l+PW,y1:y3(t),y2:y3(t),
+   stroke:(t===40||t===70)?'var(--axis)':'var(--grid)','stroke-width':1}));
+  const e=ns('text',{x:M.l-9,y:y3(t)+3.5,'text-anchor':'end',class:'tick'});e.textContent=t;svg.appendChild(e);});
+ [[70,'良好'],[40,'中等']].forEach(([t,l])=>{const e=ns('text',{x:M.l+5,y:y3(t)-5,class:'tick'});e.textContent=l;svg.appendChild(e);});
+ const SS=[['fanS','var(--s1)','粉丝转化率'],['covS','var(--s2)','标题封面'],['conS','var(--s3)','内容吸引力']];
+ SS.forEach(([k,c])=>{
+  svg.appendChild(ns('path',{d:ORD.map((n,i)=>(i?'L':'M')+NX(n).toFixed(1)+' '+y3(n[k]).toFixed(1)).join(' '),
+    fill:'none',stroke:c,'stroke-width':1.6,'stroke-linejoin':'round','stroke-linecap':'round'}));
+  ORD.forEach(n=>svg.appendChild(ns('circle',{cx:NX(n),cy:y3(n[k]),r:3.2,fill:c,stroke:'var(--surface)','stroke-width':1.6})));});
+ const last=ORD[ORD.length-1];
+ const labs=SS.map(([k,c,t])=>({y0:y3(last[k]),y:y3(last[k]),txt:t+' '+last[k]})).sort((a,b)=>a.y-b.y);
+ for(let i=1;i<labs.length;i++) if(labs[i].y-labs[i-1].y<15) labs[i].y=labs[i-1].y+15;
+ labs.forEach(L=>{ if(Math.abs(L.y-L.y0)>1)
+   svg.appendChild(ns('path',{d:`M${M.l+PW+3} ${L.y0} L${M.l+PW+10} ${L.y0} L${M.l+PW+16} ${L.y} L${M.l+PW+22} ${L.y}`,fill:'none',stroke:'var(--axis)','stroke-width':1}));
+  const e=ns('text',{x:M.l+PW+26,y:L.y+4,class:'dlab'});e.textContent=L.txt;svg.appendChild(e);});
+ // 共用日期轴
+ const AX=Y3+H3;
+ svg.appendChild(ns('line',{x1:M.l,x2:M.l+PW,y1:AX,y2:AX,stroke:'var(--axis)','stroke-width':1}));
+ SER.forEach((r,i)=>{const p=r.d.split('-'), dd=+p[2];
+   const e=ns('text',{x:dx(i),y:AX+17,'text-anchor':'middle',class:'tick'});
+   e.textContent = (dd===1 ? (+p[1])+'月'+dd : dd); svg.appendChild(e);});
+ const m0=SER[0].d.split('-');
+ const mo=ns('text',{x:M.l-9,y:AX+17,'text-anchor':'end',class:'tick'});
+ mo.textContent=(+m0[1])+'月';svg.appendChild(mo);
+}
+drawMain();
+const tip=$('#tip');
+function showTip(e,h){tip.innerHTML=h;tip.style.opacity=1;
+ tip.style.left=Math.min(innerWidth-tip.offsetWidth-12,Math.max(8,e.clientX+16))+'px';
+ tip.style.top=Math.max(8,Math.min(innerHeight-tip.offsetHeight-12,e.clientY-tip.offsetHeight/2))+'px';}
+$('#main').addEventListener('mousemove',e=>{
+ const b=$('#main').getBoundingClientRect();
+ const px=(e.clientX-b.left)/b.width*W, py=(e.clientY-b.top)/b.height*436;
+ if(py<Y2-10){
+  let i=Math.round((px-M.l)/PW*(ND-1)); i=Math.max(0,Math.min(ND-1,i)); const r=SER[i];
+  let h=`<div class="td">8月${+r.d.split('-')[2]}日</div><div class="tr"><span>粉丝总数</span><b>${fmt(r.f)}</b></div>`;
+  h+= r.list&&r.list.length
+   ? '<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--grid);line-height:1.7">当天发布<br>'+r.list.map(x=>`· ${x.t}　<span style="color:var(--muted)">涨粉 ${x.f}</span>`).join('<br>')+'</div>'
+   : '<div style="margin-top:8px;color:var(--muted)">当天没有发布</div>';
+  showTip(e,h);
+ } else {
+  let best=null,bd=1e9; ORD.forEach(n=>{const d=Math.abs(NX(n)-px); if(d<bd){bd=d;best=n;}});
+  if(!best) return;
+  showTip(e,`<div class="td">${md(best.date)} 发布</div><div style="font-weight:640;margin-bottom:7px">${best.title}</div>
+  <div class="tr"><span><i class="kd" style="background:var(--s4)"></i> 涨粉量</span><b>${best.fol}</b></div>
+  <div class="tr"><span><i class="kd" style="background:var(--s1)"></i> 粉丝转化率</span><b>${best.fanS}/100 · ${best.fanB}</b></div>
+  <div class="tr"><span><i class="kd" style="background:var(--s2)"></i> 标题封面</span><b>${best.covS}/100 · ${best.covB}</b></div>
+  <div class="tr"><span><i class="kd" style="background:var(--s3)"></i> 内容吸引力</span><b>${best.conS}/100 · ${best.conB}</b></div>`);}
+});
+$('#main').addEventListener('mouseleave',()=>tip.style.opacity=0);
+
+/* 表格视图：五个数据 */
+$('#tv').innerHTML='<table class="tv"><thead><tr><th>笔记</th><th>日期</th><th>粉丝总数</th><th>涨粉量</th><th>粉丝转化率</th><th>标题封面</th><th>内容吸引力</th></tr></thead><tbody>'
+ + ORD.map(n=>`<tr><td>${n.title}</td><td>${md(n.date)}</td><td>${fmt(SER[dayIdx[n.date]].f)}</td><td>${n.fol}</td><td>${n.fanS}</td><td>${n.covS}</td><td>${n.conS}</td></tr>`).join('')
+ + '</tbody></table>';
+
+/* ── 逐篇分析 ── */
+const CFG={
+ fan:{s:'fanS',b:'fanB',bc:'fanBc',algo:'fanAlgo',blog:'fanBlog',fix:'fanFix',cover:false,l:'粉丝转化率',
+  boxes:n=>[['涨粉',n.fol],['曝光',fmt(n.imp)],['观看',fmt(n.views)],['涨粉/曝光',n.fanR+'%'],['得分',n.fanS+'/100']]},
+ cov:{s:'covS',b:'covB',bc:'covBc',algo:'covAlgo',blog:'covBlog',fix:'covFix',cover:true,l:'标题封面吸引力',
+  boxes:n=>[['观看/曝光',n.covR+'%'],['曝光',fmt(n.imp)],['观看',fmt(n.views)],['封面比例',n.ratio?n.ratio.toFixed(2)+':1':'无文件'],['得分',n.covS+'/100']]},
+ con:{s:'conS',b:'conB',bc:'conBc',algo:'conAlgo',blog:'conBlog',fix:'conFix',cover:false,l:'内容吸引力',
+  boxes:n=>[['涨粉/观看',n.conR+'%'],['人均观看',n.dwell+'秒'],['点赞',n.like],['评论',n.cmt],['分享',n.shr],['得分',n.conS+'/100']]}};
+let sortK='fol', sortD=-1;
+const COLS=[['title','笔记',0],['date','日期',0],['fol','涨粉量',1],['fanS','粉丝转化率',1],['covS','标题封面',1],['conS','内容吸引力',1]];
+function overview(){
+ const rows=[...N].sort((a,b)=>{
+   const A=a[sortK],B=b[sortK];
+   if(typeof A==='string') return sortD*(A<B?-1:A>B?1:0);
+   return sortD*(A-B) || b.covR-a.covR;});
+ $('#list').innerHTML='<table class="ovw"><thead><tr>'+COLS.map(([k,l])=>
+   `<th data-k="${k}" data-on="${k===sortK?1:0}">${l}<span class="ar">${k===sortK?(sortD<0?'▼':'▲'):'⇅'}</span></th>`).join('')
+  +'</tr></thead><tbody>'+rows.map(n=>`<tr>
+   <td class="t">${n.title}</td><td>${md(n.date)}</td><td>${n.fol}</td>
+   <td><span class="sc"><i class="chip ${n.fanBc}"></i>${n.fanS}</span></td>
+   <td><span class="sc"><i class="chip ${n.covBc}"></i>${n.covS}</span></td>
+   <td><span class="sc"><i class="chip ${n.conBc}"></i>${n.conS}</span></td></tr>`).join('')+'</tbody></table>';
+ document.querySelectorAll('.ovw th').forEach(th=>th.onclick=()=>{
+   const k=th.dataset.k; if(k===sortK) sortD=-sortD; else {sortK=k; sortD=(k==='title'||k==='date')?1:-1;}
+   overview();});
+}
+let detD=1, detK=null;
+function detail(k){
+ const c=CFG[k]; detK=k;
+ $('#sortbar').style.display='block';
+ $('#sortbar').innerHTML=`<button class="ctl" id="bDir">按${c.l}得分 ${detD>0?'从高到低 ▼':'从低到高 ▲'}</button>`;
+ $('#bDir').onclick=()=>{detD=-detD; detail(detK);};
+ const rows=[...N].sort((a,b)=> detD*(b[c.s]-a[c.s]) || b.covR-a.covR || b.dwell-a.dwell);
+ $('#list').innerHTML=rows.map((n,i)=>{
+  const a=AN[n.title]||{};
+  const cov=(c.cover&&n.coverKey&&TH[n.coverKey])
+   ?`<div class="cov"><img src="${TH[n.coverKey]}" alt="${n.title} 封面"><div class="cap">${n.coverDesc}</div></div>`:'';
+  return `<div class="pcard"><div class="phead"><span class="rank">${i+1}</span>
+   <span class="ptit">${n.title}</span><span class="pdate">${md(n.date)}</span>
+   <span class="psc">${n[c.s]}<span class="of">/100</span></span><span class="pill ${n[c.bc]}">${n[c.b]}</span></div>
+   <div class="pbody">${cov}<div class="bmain">
+    <div class="dgrid">${c.boxes(n).map(([kk,vv])=>`<div class="dbox"><div class="k">${kk}</div><div class="v">${vv}</div></div>`).join('')}</div>
+    <div class="tagline">算法专家诊断 · ${n[c.s]>=40?'为什么高':'为什么低'}</div>${ul(a[c.algo])}
+    <div class="tagline" style="margin-top:12px">专业博主诊断 · ${n[c.s]>=40?'为什么高':'为什么低'}</div>${ul(a[c.blog])}
+    <div class="tagline" style="margin-top:12px">综合建议</div>${ul(a[c.fix])}
+   </div></div></div>`;}).join('');
+}
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
+ document.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-selected','false'));
+ t.setAttribute('aria-selected','true');
+ if(t.dataset.k==='ovw'){$('#sortbar').style.display='none';overview();}else detail(t.dataset.k);});
+overview();
+
+$('#sug').innerHTML='<h2>总建议</h2><p class="note">按杠杆从大到小。每条都标出触发它的看板数字、算法依据和博主实操依据。</p>'+D.sug.map((s,i)=>
+ `<div class="srow"><span class="rank">${i+1}</span><div style="flex:1">
+  <div class="shead">${s.h}</div><div class="trig">${s.t}</div>
+  <ul>${s.p.map(x=>`<li>${x}</li>`).join('')}</ul>${s.demo||''}<div class="src">${s.s}</div></div></div>`).join('');
+$('#bTheme').onclick=()=>{const d=document.documentElement.getAttribute('data-theme')==='dark';
+ document.documentElement.setAttribute('data-theme',d?'light':'dark');$('#bTheme').textContent=d?'深色':'浅色';drawMain();};
+</script></body></html>

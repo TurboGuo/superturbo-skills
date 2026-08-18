@@ -32,6 +32,18 @@ Analyzes any user's X/Twitter writing style and generates draft posts that sound
 - 🗣️ **Triggers:** "draft tweets for me", "write posts in my style", "ghostwrite", "tweet ideas", "x writer"
 - 🔑 Requires a Bearer Token and X handle set in the skill config before use.
 
+### 📈 x-growth-dashboard-public
+Turns any X (Twitter) account's own analytics exports into a single-file HTML diagnostic board: three externally benchmarked scores out of 100, a follower curve with follows-per-post, 3–5 overall suggestions, and a post-by-post explanation from two angles — what the published ranking algorithm did, and what a professional would change. Runs fully offline on Python 3; the rendered HTML makes no network calls.
+- 🗣️ **Triggers:** "why is my X account not growing", "X growth audit", "X analytics report", "post by post review", or uploading `account_analytics_content` / `account_overview_analytics` CSVs
+- 📥 Needs the two CSV exports from [analytics.x.com](https://analytics.x.com) plus your current follower count. A connected X API tool is optional enrichment, never a substitute.
+- 🧪 Ships synthetic example data in `assets/example/` for a smoke test before you feed it real numbers.
+
+### 📕 xiaohongshu-growth-dashboard-public
+The Xiaohongshu (小红书) counterpart: turns the creator-backend「笔记列表明细表」export into a single-file Chinese HTML 涨粉诊断看板 — three 100-point scores, a follower curve, per-note diagnosis from both the recommendation algorithm's angle and a working creator's, and 3–5 executable next actions. Covers and profile screenshots are optional inputs that unlock cover/conversion analysis.
+- 🗣️ **Triggers:** 「小红书涨粉分析」「笔记复盘」「为什么不涨粉」「小红书数据诊断」「账号数据看板」, or uploading a 笔记列表明细表 export
+- 🌏 Chinese-first output. No account authorization, API key, or connector required.
+- 🔎 `scripts/discover.py` finds exports in a folder by header row, so renamed or duplicated files still resolve.
+
 ### 🍗 crazy-thursday-joke
 Searches and sends a currently-trending "疯狂星期四" (KFC Crazy Thursday / V我50) joke to remind Turbo it's Thursday and time to grab KFC. Also fires when Turbo asks what day it is — if today happens to be Thursday, it answers with a joke instead of a plain date.
 - 🗣️ **Triggers:** "疯四段子", "疯狂星期四", "来个疯四", "crazy thursday", "今天星期几"

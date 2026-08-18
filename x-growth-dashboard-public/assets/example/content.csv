@@ -1,0 +1,17 @@
+Post id,Date,Post text,Post Link,Impressions,Likes,Engagements,Bookmarks,Shares,New follows,Replies,Reposts,Profile visits,Detail Expands,URL Clicks,Hashtag Clicks,Permalink Clicks
+9000000000000001,"Sun, Mar 15, 2026",A three point argument about something the author actually knows,https://x.com/example/status/9000000000000001,122,0,6,0,0,0,2,0,1,3,0,0,0
+9000000000000015,"Sun, Mar 15, 2026",@someaccount a substantive reply,https://x.com/example/status/9000000000000015,40,0,0,0,0,0,0,0,0,0,0,0,0
+9000000000000002,"Sat, Mar 14, 2026",A three point argument about something the author actually knows,https://x.com/example/status/9000000000000002,175,0,1,0,0,0,1,0,0,0,0,0,0
+9000000000000016,"Sat, Mar 14, 2026",https://t.co/EXAMPLE01,https://x.com/example/status/9000000000000016,271,0,8,0,0,0,2,0,3,3,0,0,0
+9000000000000003,"Fri, Mar 13, 2026",A three point argument about something the author actually knows,https://x.com/example/status/9000000000000003,224,2,15,1,0,0,2,0,4,6,0,0,0
+9000000000000004,"Thu, Mar 12, 2026",A three point argument about something the author actually knows,https://x.com/example/status/9000000000000004,172,0,4,0,0,0,0,0,3,1,0,0,0
+9000000000000005,"Wed, Mar 11, 2026",A three point argument about something the author actually knows,https://x.com/example/status/9000000000000005,59,0,2,0,0,1,2,0,0,0,0,0,0
+9000000000000006,"Tue, Mar 10, 2026",short reaction,https://x.com/example/status/9000000000000006,166,0,5,1,0,0,0,1,0,3,0,0,0
+9000000000000007,"Mon, Mar 09, 2026",short reaction,https://x.com/example/status/9000000000000007,8,0,0,0,0,0,0,0,0,0,0,0,0
+9000000000000008,"Sun, Mar 08, 2026",short reaction,https://x.com/example/status/9000000000000008,285,1,18,1,0,0,1,0,2,13,0,0,0
+9000000000000009,"Sat, Mar 07, 2026",short reaction,https://x.com/example/status/9000000000000009,161,3,11,0,0,0,1,0,1,6,0,0,0
+9000000000000010,"Fri, Mar 06, 2026",@someaccount a substantive reply,https://x.com/example/status/9000000000000010,43,0,2,1,0,0,0,0,0,1,0,0,0
+9000000000000011,"Thu, Mar 05, 2026",@someaccount a substantive reply,https://x.com/example/status/9000000000000011,54,0,1,0,0,1,0,0,0,1,0,0,0
+9000000000000012,"Wed, Mar 04, 2026",@someaccount a substantive reply,https://x.com/example/status/9000000000000012,49,0,3,0,0,0,1,0,0,2,0,0,0
+9000000000000013,"Tue, Mar 03, 2026",@someaccount a substantive reply,https://x.com/example/status/9000000000000013,50,0,0,0,0,0,0,0,0,0,0,0,0
+9000000000000014,"Mon, Mar 02, 2026",@someaccount a substantive reply,https://x.com/example/status/9000000000000014,54,0,4,0,0,0,2,0,0,2,0,0,0
