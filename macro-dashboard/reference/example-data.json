@@ -1,0 +1,168 @@
+{
+  "language": "en",
+  "title": "Macro Impact Dashboard",
+  "stamp": "As of Wednesday, August 19, 2026, 2:25pm ET, hours after Treasury doubled its long end buybacks.",
+  "regime": "late cycle repression",
+  "banner": "One event set the tone. Treasury doubled long end buybacks to at least **$4bn** per operation, the 30 year fell from Tuesday's 19 year high of **5.34%** to **5.19%**, and the 10 year eased to **4.65%**. Every asset here reprices off that single line, which is why three of the four verdicts still carry a cap.",
+  "assets": [
+    {
+      "emoji": "📊",
+      "name": "US Stocks",
+      "verdict": "BULLISH",
+      "dir": "bull",
+      "cap": "capped",
+      "one": "Growth and credit both say go. Valuation says do not miss a quarter.",
+      "qual": "capped, valuation leaves no room for an earnings miss",
+      "factors": [
+        { "s": "up", "h": "Growth accelerating", "b": "ISM Manufacturing PMI hit **55.6** in July, the strongest print since May 2022 and consistent with real GDP growing about **2.8%** annualised." },
+        { "s": "up", "h": "Credit is not flashing stress", "b": "The ICE BofA US high yield OAS closed at **275** basis points, near the tight end of its post 2007 range and a green light for equity risk." },
+        { "s": "down", "h": "Valuation leaves no cushion (offset)", "b": "The S&P 500 trades at **31.3x** trailing earnings against a **17.6x** long run average, so any miss has to be absorbed by price." }
+      ]
+    },
+    {
+      "emoji": "💵",
+      "name": "US Cash",
+      "verdict": "BULLISH",
+      "dir": "bull",
+      "cap": "",
+      "one": "Real carry of 1.37 percent and no cuts priced. The only cost is being out of the rally.",
+      "qual": "no qualifier, the carry is intact and nothing in the price threatens it",
+      "factors": [
+        { "s": "up", "h": "Positive real carry", "b": "The 3 month T bill yields **3.87%** against core CPI of **2.5%**, so 3.87 minus 2.5 = **1.37** percent of real return for zero duration risk." },
+        { "s": "up", "h": "No cuts in the price", "b": "Fed funds effective sits at **3.63%** with the target held at 3.50 to 3.75, and futures put roughly a **34%** chance on a September hike versus under **1%** on a cut." },
+        { "s": "down", "h": "Everything else is bid (offset)", "b": "With VIX at **15.84** and the S&P within **1.6%** of its August 13 record, holding cash through a risk on tape is a real opportunity cost." }
+      ]
+    },
+    {
+      "emoji": "🥇",
+      "name": "Gold",
+      "verdict": "BULLISH",
+      "dir": "bull",
+      "cap": "capped",
+      "one": "A weak dollar and a live war premium, running straight into the 200 day.",
+      "qual": "capped, the 200 day near $4,510 sits directly overhead",
+      "factors": [
+        { "s": "up", "h": "Dollar breaking down", "b": "DXY fell **0.76%** to **98.90** today and remains beneath a flat 200 day EMA near **99.75** that has capped every attempt for a fortnight." },
+        { "s": "up", "h": "Inflation expectations grinding up", "b": "The 10 year breakeven rose to **2.30%** from **2.24%** on August 13 as Brent held near **$91** on the Hormuz closure." },
+        { "s": "down", "h": "The 200 day is directly overhead (offset)", "b": "Spot at roughly **$4,490** after a **3.5%** day runs into the 200 day simple moving average near **$4,510**, the level that has rejected every advance since early June." }
+      ]
+    },
+    {
+      "emoji": "₿",
+      "name": "Crypto",
+      "verdict": "BULLISH",
+      "dir": "bull",
+      "cap": "capped",
+      "one": "Yields relented and the shorts got run over, but BTC is still under its 200 day.",
+      "qual": "capped, BTC is still below its 200 day average near $75,062",
+      "factors": [
+        { "s": "up", "h": "Long end liquidity backstop", "b": "Treasury doubling buybacks to at least **$4bn** per operation knocked the 30 year from Tuesday's **5.34%** high to **5.19%** and drove BTC from roughly **$64,100** to a **$69,600** high, now near **$68,000**." },
+        { "s": "up", "h": "ETF demand returning", "b": "Spot BTC ETFs took in **$297.6mn** on Monday with no fund reporting a redemption, reversing a three session outflow run." },
+        { "s": "down", "h": "Real yields still restrictive (offset)", "b": "The 10 year real yield sits at **2.44%**, the highest opportunity cost crypto has faced this cycle for an asset that pays no coupon." }
+      ]
+    }
+  ],
+  "matrix": [
+    { "f": "Growth", "r": "ISM Mfg PMI 55.6", "c": ["p", "z", "z", "z"] },
+    { "f": "Credit spreads", "r": "HY OAS 275 bp", "c": ["p", "z", "z", "p"] },
+    { "f": "Volatility", "r": "VIX 15.84", "c": ["p", "z", "z", "z"] },
+    { "f": "Long end liquidity", "r": "buybacks doubled to $4bn", "c": ["p", "z", "p", "p"] },
+    { "f": "Fed policy bias", "r": "held 3.50 to 3.75, 34% hike", "c": ["z", "p", "z", "n"] },
+    { "f": "Real carry on cash", "r": "3.87 minus 2.5 = 1.37%", "c": ["z", "p", "z", "z"] },
+    { "f": "Risk backdrop", "r": "S&P 1.6% off its record", "c": ["z", "n", "z", "z"] },
+    { "f": "Dollar", "r": "DXY 98.90, down 0.76%", "c": ["z", "z", "p", "p"] },
+    { "f": "Inflation expectations", "r": "10 year breakeven 2.30%", "c": ["z", "z", "p", "z"] },
+    { "f": "Safe haven", "r": "Hormuz closed, Brent near $91", "c": ["z", "z", "p", "z"] },
+    { "f": "Real yields", "r": "DFII10 2.44%", "c": ["z", "z", "n", "n"] },
+    { "f": "Flows and positioning", "r": "$297.6mn in, $1.8bn shorts cut", "c": ["z", "z", "z", "p"] },
+    { "f": "Valuation and resistance", "r": "31.3x, and the 200 day lines", "c": ["n", "z", "n", "n"] }
+  ],
+  "tiles": [
+    { "lab": "10 year real yield", "val": "2.44%", "src": "FRED DFII10, August 17", "lo": 0, "hi": 3, "v": 2.44, "mark": 2.0, "markLab": "2.00", "spark": [2.43, 2.42, 2.39, 2.41, 2.44], "read": "Restrictive. Above 2 percent it is a direct drag on gold and on crypto." },
+    { "lab": "10 year nominal yield", "val": "4.72%", "src": "FRED DGS10, August 17, 4.65% intraday today", "lo": 3, "hi": 5.5, "v": 4.72, "mark": 4.75, "markLab": "4.75", "spark": [4.70, 4.68, 4.63, 4.68, 4.72], "read": "A 20 month high on Tuesday, pulled back after the buyback news." },
+    { "lab": "10 year breakeven", "val": "2.30%", "src": "FRED T10YIE, August 18", "lo": 1.5, "hi": 3, "v": 2.30, "mark": 2.0, "markLab": "2.00", "spark": [2.26, 2.24, 2.27, 2.28, 2.30], "read": "Grinding up with Brent near $91. This is the gold bid." },
+    { "lab": "High yield OAS", "val": "275 bp", "src": "FRED BAMLH0A0HYM2, August 18", "lo": 200, "hi": 900, "v": 275, "mark": 500, "markLab": "500", "spark": [2.71, 2.71, 2.67, 2.70, 2.75], "read": "Tight. Credit is not pricing any stress in the real economy." },
+    { "lab": "Fed funds effective", "val": "3.63%", "src": "FRED DFF, August 17, target 3.50 to 3.75", "lo": 0, "hi": 5.5, "v": 3.63, "mark": 2.0, "markLab": "2.00", "spark": [3.63, 3.63, 3.63, 3.63, 3.63], "read": "Held for now, with roughly a 34 percent chance of a September hike." },
+    { "lab": "3 month T bill", "val": "3.87%", "src": "FRED DGS3MO, August 17", "lo": 0, "hi": 5.5, "v": 3.87, "mark": 2.5, "markLab": "core CPI", "spark": [3.89, 3.87, 3.87, 3.86, 3.87], "read": "Pays 1.37 percent over core CPI for zero duration risk." },
+    { "lab": "Core CPI, year over year", "val": "2.5%", "src": "BLS, July 2026, headline 3.4%", "lo": 0, "hi": 6, "v": 2.5, "mark": 2.0, "markLab": "target", "spark": [], "read": "Down 0.1 point from June, still half a point above target." },
+    { "lab": "ISM Manufacturing PMI", "val": "55.6", "src": "ISM, July 2026", "lo": 42, "hi": 60, "v": 55.6, "mark": 50, "markLab": "50", "spark": [], "read": "Highest since May 2022. Seven straight months of expansion." },
+    { "lab": "VIX", "val": "15.84", "src": "Cboe via FRED VIXCLS, August 18", "lo": 10, "hi": 40, "v": 15.84, "mark": 20, "markLab": "20", "spark": [14.55, 14.63, 14.25, 15.19, 15.84], "read": "Calm, though it has crept up five points off the August 14 low." },
+    { "lab": "Dollar index", "val": "98.90", "src": "Investing.com DXY, August 19, down 0.76%", "lo": 95, "hi": 110, "v": 98.90, "mark": 99.75, "markLab": "200d", "spark": [99.64, 99.66, 98.90], "read": "Below a flat 200 day EMA near 99.75 that has capped it for two weeks." },
+    { "lab": "S&P 500", "val": "7,692", "src": "FRED SP500, August 18 close", "lo": 6400, "hi": 7900, "v": 7691.76, "mark": 7816.70, "markLab": "record", "spark": [7748.50, 7798.99, 7785.76, 7745.06, 7691.76], "read": "A third straight loss, 124.94 points below the August 13 record." },
+    { "lab": "Bitcoin", "val": "$68,000", "src": "CryptoSlate, August 19, high of $69,600", "lo": 55000, "hi": 80000, "v": 68000, "mark": 75062, "markLab": "200d", "spark": [62975, 64336, 64384, 68000], "read": "Reclaimed the 50 and 100 day EMAs. The 200 day near $75,062 is next." }
+  ],
+  "calcs": [
+    { "lab": "10 year real yield, from the nominal and the breakeven", "left": "4.72", "op": "minus", "right": "2.30", "res": "2.42 percent", "note": "Cross checks against FRED DFII10 at 2.44 percent, a 2 basis point gap from the different observation dates." },
+    { "lab": "Real yield on cash, versus core inflation", "left": "3.87", "op": "minus", "right": "2.50", "res": "1.37 percent", "note": "3 month T bill at 3.87 percent, core CPI at 2.5 percent year over year for July." },
+    { "lab": "Real yield on cash, versus headline inflation", "left": "3.87", "op": "minus", "right": "3.40", "res": "0.47 percent", "note": "The stricter test. Headline CPI ran 3.4 percent in July on energy, so the cash cushion is thinner than core implies." },
+    { "lab": "S&P 500 distance from its record", "left": "124.94", "op": "divided by", "right": "7,816.70", "res": "1.60 percent", "note": "August 18 close of 7,691.76 against the August 13 intraday record of 7,816.70." },
+    { "lab": "30 year yield retracement after the buyback", "left": "5.34", "op": "minus", "right": "5.19", "res": "15 basis points", "note": "Tuesday's 19 year high against Wednesday's low. The largest daily drop since late June." }
+  ],
+  "barChart": {
+    "title": "US spot bitcoin ETF net flows, daily",
+    "sub": "Week of August 10 to 14, the four day drawdown that preceded this week's reversal. Values in millions of dollars.",
+    "unit": "$",
+    "min": -160,
+    "max": 40,
+    "ticks": [40, 0, -40, -80, -120, -160],
+    "note": "Five sessions, $316.8mn net out. Monday August 17 then reversed with a single $297.6mn inflow.",
+    "itemHeader": "Session",
+    "valueHeader": "Net flow, $mn",
+    "extraRows": [["Mon Aug 17", "+297.6"]],
+    "data": [
+      { "label": "Mon Aug 10", "value": -114.1 },
+      { "label": "Tue Aug 11", "value": -3.9 },
+      { "label": "Wed Aug 12", "value": -71.7 },
+      { "label": "Thu Aug 13", "value": -126.4 },
+      { "label": "Fri Aug 14", "value": -0.7 }
+    ]
+  },
+  "lineChart": {
+    "title": "ISM Manufacturing PMI, last 12 months",
+    "sub": "July printed 55.6, the highest since May 2022. The line at 50 separates expansion from contraction.",
+    "seriesName": "ISM Manufacturing PMI",
+    "min": 46,
+    "max": 58,
+    "ticks": [46, 48, 50, 52, 54, 56, 58],
+    "refLine": 50,
+    "refLabel": "50, expansion above",
+    "itemHeader": "Month",
+    "valueHeader": "PMI",
+    "data": [
+      { "label": "Aug 25", "value": 48.9 },
+      { "label": "Sep", "value": 48.9 },
+      { "label": "Oct", "value": 48.8 },
+      { "label": "Nov", "value": 48.0 },
+      { "label": "Dec", "value": 47.9 },
+      { "label": "Jan 26", "value": 52.6 },
+      { "label": "Feb", "value": 52.4 },
+      { "label": "Mar", "value": 52.7 },
+      { "label": "Apr", "value": 52.7 },
+      { "label": "May", "value": 54.0 },
+      { "label": "Jun", "value": 53.3 },
+      { "label": "Jul", "value": 55.6 }
+    ]
+  },
+  "sources": [
+    ["FRED DFII10", "https://fred.stlouisfed.org/series/DFII10"],
+    ["FRED DGS10", "https://fred.stlouisfed.org/series/DGS10"],
+    ["FRED T10YIE", "https://fred.stlouisfed.org/series/T10YIE"],
+    ["FRED BAMLH0A0HYM2", "https://fred.stlouisfed.org/series/BAMLH0A0HYM2"],
+    ["FRED DGS3MO", "https://fred.stlouisfed.org/series/DGS3MO"],
+    ["FRED DFF", "https://fred.stlouisfed.org/series/DFF"],
+    ["FRED VIXCLS", "https://fred.stlouisfed.org/series/VIXCLS"],
+    ["FRED SP500", "https://fred.stlouisfed.org/series/SP500"],
+    ["BLS CPI July 2026", "https://www.bls.gov/news.release/archives/cpi_08122026.htm"],
+    ["ISM Manufacturing PMI July 2026", "https://www.ismworld.org/supply-management-news-and-reports/reports/ism-pmi-reports/pmi/july/"],
+    ["Treasury buyback schedule", "https://home.treasury.gov/system/files/221/Tentative-Buyback-Schedule.pdf"],
+    ["CryptoSlate on the bitcoin move", "https://cryptoslate.com/bitcoin-price-hits-69500-as-over-400m-of-shorts-liquidated-because-us-doubles-treasury-debt-buybacks-to-crush-long-term-yields/"],
+    ["Bitcoin.com on ETF flows", "https://news.bitcoin.com/bitcoin-etf/blackrock-fidelity-drive-297-5m-bitcoin-etf-rebound/"],
+    ["Barchart bitcoin moving averages", "https://www.barchart.com/crypto/quotes/%5EBTCUSD/technical-analysis"],
+    ["Investing.com XAU/USD", "https://www.investing.com/currencies/xau-usd"],
+    ["CMC Markets on the gold 200 day", "https://www.cmcmarkets.com/en-gb/news-and-analysis/gold-faces-technical-and-real-yield-headwinds"],
+    ["Investing.com Fed rate monitor", "https://www.investing.com/central-banks/fed-rate-monitor"],
+    ["VCP S&P 500 valuation", "https://vcpscanner.com/market-valuation"],
+    ["Glassnode on X", "https://x.com/glassnode/status/2090114717624742256"],
+    ["Kitco on Hormuz and oil", "https://www.kitco.com/news/article/2026-08-18/gold-pulls-back-hormuz-attack-keeps-crude-above-90-kitco-am-report"]
+  ]
+}
