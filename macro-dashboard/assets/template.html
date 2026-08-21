@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>__TITLE__</title>
+<style>
+  :root {
+    color-scheme: light;
+    --surface-1: #fcfcfb;
+    --page: #f9f9f7;
+    --text-primary: #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted: #898781;
+    --grid: #e1e0d9;
+    --axis: #c3c2b7;
+    --border: rgba(11,11,11,0.10);
+    --pos: #2a78d6;
+    --neg: #e34948;
+    --neutral: #f0efec;
+    --seq-100: #cde2fb;
+    --seq-250: #86b6ef;
+    --seq-450: #2a78d6;
+    --seq-600: #184f95;
+    --good: #0ca30c;
+    --critical: #d03b3b;
+    --warning: #fab219;
+    --chip-bg: rgba(11,11,11,0.04);
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --surface-1: #1a1a19;
+    --page: #0d0d0d;
+    --text-primary: #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted: #898781;
+    --grid: #2c2c2a;
+    --axis: #383835;
+    --border: rgba(255,255,255,0.10);
+    --pos: #3987e5;
+    --neg: #e66767;
+    --neutral: #383835;
+    --seq-100: #184f95;
+    --seq-250: #1c5cab;
+    --seq-450: #3987e5;
+    --seq-600: #86b6ef;
+    --good: #0ca30c;
+    --critical: #d03b3b;
+    --warning: #fab219;
+    --chip-bg: rgba(255,255,255,0.06);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--page);
+    color: var(--text-primary);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 28px 20px 64px; }
+
+  header.top { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 22px; }
+  h1 { font-size: 22px; font-weight: 650; margin: 0 0 4px; letter-spacing: -0.01em; }
+  .stamp { font-size: 13px; color: var(--text-secondary); margin: 0; }
+  .regime { display: inline-flex; align-items: center; gap: 7px; margin-top: 10px; padding: 5px 11px; border-radius: 999px; background: var(--chip-bg); font-size: 13px; color: var(--text-secondary); }
+  .regime b { color: var(--text-primary); font-weight: 600; }
+  .themebtn { border: 1px solid var(--border); background: var(--surface-1); color: var(--text-secondary); border-radius: 8px; padding: 7px 12px; font: inherit; font-size: 13px; cursor: pointer; }
+  .themebtn:hover { color: var(--text-primary); }
+
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
+  .tab { appearance: none; border: 0; background: none; font: inherit; font-size: 14px; font-weight: 550; color: var(--text-muted); padding: 10px 16px; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+  .tab:hover { color: var(--text-secondary); }
+  .tab[aria-selected="true"] { color: var(--text-primary); border-bottom-color: var(--text-primary); }
+  .panel[hidden] { display: none; }
+
+  .board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; }
+  .bcard { background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px; padding: 16px 18px 15px; border-top: 3px solid var(--axis); }
+  .bcard.bull { border-top-color: var(--good); }
+  .bcard.bear { border-top-color: var(--critical); }
+  .b-top { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .b-emoji { font-size: 17px; line-height: 1; }
+  .b-name { font-size: 13px; color: var(--text-muted); font-weight: 550; }
+  .b-verdict { display: flex; align-items: center; gap: 8px; }
+  .b-arrow { flex: none; width: 24px; height: 24px; border-radius: 7px; display: grid; place-items: center; font-size: 12px; line-height: 1; color: #fff; }
+  .bull .b-arrow { background: var(--good); }
+  .bear .b-arrow { background: var(--critical); }
+  .b-word { font-size: 25px; font-weight: 650; letter-spacing: -0.01em; line-height: 1; }
+  .bull .b-word { color: var(--good); }
+  .bear .b-word { color: var(--critical); }
+  .b-meta { display: flex; align-items: center; gap: 8px; margin-top: 11px; flex-wrap: wrap; }
+  .b-qual { font-size: 12px; padding: 3px 8px; border-radius: 6px; background: var(--chip-bg); color: var(--text-secondary); }
+  .b-score { font-size: 12px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+  .b-line { font-size: 12.5px; color: var(--text-secondary); margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--grid); }
+  .banner { background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px; padding: 14px 20px; margin-bottom: 26px; font-size: 13.5px; color: var(--text-secondary); }
+  .banner b, .banner .num { color: var(--text-primary); font-weight: 600; }
+  @media (max-width: 900px) { .board { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 520px) { .board { grid-template-columns: 1fr; } }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px; margin-bottom: 28px; }
+  .card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px 16px; }
+  .card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .card-emoji { font-size: 19px; }
+  .card-name { font-size: 15px; font-weight: 620; flex: 1; }
+  .verdict { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 650; letter-spacing: 0.03em; padding: 4px 9px; border-radius: 7px; white-space: nowrap; }
+  .verdict.bull { background: color-mix(in srgb, var(--good) 14%, transparent); color: var(--good); }
+  .verdict.bear { background: color-mix(in srgb, var(--critical) 14%, transparent); color: var(--critical); }
+  .qual { font-size: 12px; color: var(--text-muted); margin-bottom: 14px; }
+  .factor { display: flex; gap: 10px; padding: 9px 0; border-top: 1px solid var(--grid); }
+  .factor:first-of-type { border-top: 0; padding-top: 4px; }
+  .fdot { flex: none; width: 18px; height: 18px; border-radius: 5px; display: grid; place-items: center; font-size: 12px; font-weight: 700; line-height: 1; margin-top: 2px; color: #fff; }
+  .fdot.up { background: var(--pos); }
+  .fdot.down { background: var(--neg); }
+  .fhead { display: block; font-size: 13.5px; font-weight: 580; margin-bottom: 3px; }
+  .fbody { font-size: 13px; color: var(--text-secondary); }
+  .fbody .num { color: var(--text-primary); font-weight: 600; }
+
+  .section-h { font-size: 15px; font-weight: 620; margin: 0 0 4px; }
+  .section-s { font-size: 13px; color: var(--text-muted); margin: 0 0 14px; }
+  .matrix-wrap { background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; overflow-x: auto; }
+  table.matrix { border-collapse: collapse; width: 100%; font-size: 13px; min-width: 640px; }
+  table.matrix th { font-weight: 550; color: var(--text-muted); text-align: center; padding: 0 6px 10px; font-size: 12px; }
+  table.matrix th.rowh { text-align: left; width: 34%; }
+  table.matrix th.readh { text-align: left; width: 30%; }
+  table.matrix td { border-top: 1px solid var(--grid); padding: 8px 6px; text-align: center; }
+  table.matrix td.rowl { text-align: left; font-weight: 550; color: var(--text-primary); }
+  table.matrix td.readl { text-align: left; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+  .cell { display: inline-grid; place-items: center; width: 26px; height: 22px; border-radius: 6px; font-size: 13px; font-weight: 700; line-height: 1; color: #fff; }
+  .cell.p { background: var(--pos); }
+  .cell.n { background: var(--neg); }
+  .cell.z { background: var(--neutral); color: var(--text-muted); font-weight: 500; }
+  .tally td { font-weight: 620; color: var(--text-primary); border-top: 1px solid var(--axis); }
+  .legendrow { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 14px; font-size: 12px; color: var(--text-muted); align-items: center; }
+  .legendrow span.k { display: inline-flex; align-items: center; gap: 6px; }
+
+  .chartcard { background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px 14px; }
+  .chart-title { font-size: 14px; font-weight: 600; margin: 0 0 2px; }
+  .chart-sub { font-size: 12.5px; color: var(--text-muted); margin: 0 0 14px; }
+  svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .gl { stroke: var(--grid); stroke-width: 1; }
+  .ax { stroke: var(--axis); stroke-width: 1; }
+  .tk { fill: var(--text-muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+  .dlab { fill: var(--text-primary); font-size: 11.5px; font-weight: 600; }
+  .refl { stroke: var(--axis); stroke-width: 1; }
+  .refx { fill: var(--text-muted); font-size: 11px; }
+  .hit { fill: transparent; cursor: pointer; }
+  .tip { position: fixed; pointer-events: none; z-index: 40; background: var(--surface-1); border: 1px solid var(--border); border-radius: 9px; padding: 8px 11px; font-size: 12.5px; color: var(--text-primary); box-shadow: 0 6px 22px rgba(0,0,0,0.14); opacity: 0; transition: opacity .1s; max-width: 240px; }
+  .tip.on { opacity: 1; }
+  .tip .tl { color: var(--text-muted); font-size: 11.5px; margin-bottom: 2px; }
+  .tip .tv { font-weight: 620; font-variant-numeric: tabular-nums; }
+
+  details.tv { margin-top: 12px; }
+  details.tv summary { font-size: 12.5px; color: var(--text-muted); cursor: pointer; list-style: none; }
+  details.tv summary::-webkit-details-marker { display: none; }
+  details.tv summary::before { content: "\25b8  "; }
+  details.tv[open] summary::before { content: "\25be  "; }
+  table.dt { border-collapse: collapse; width: 100%; font-size: 12.5px; margin-top: 10px; }
+  table.dt th, table.dt td { border-bottom: 1px solid var(--grid); padding: 6px 8px; text-align: right; font-variant-numeric: tabular-nums; }
+  table.dt th:first-child, table.dt td:first-child { text-align: left; font-variant-numeric: normal; }
+  table.dt th { color: var(--text-muted); font-weight: 550; }
+
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(238px, 1fr)); gap: 14px; margin-bottom: 26px; }
+  .tile { background: var(--surface-1); border: 1px solid var(--border); border-radius: 13px; padding: 15px 17px 14px; }
+  .t-lab { font-size: 12.5px; color: var(--text-muted); margin-bottom: 2px; }
+  .t-row { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+  .t-val { font-size: 27px; font-weight: 620; line-height: 1.1; letter-spacing: -0.01em; }
+  .t-spark { width: 74px; height: 26px; flex: none; }
+  .t-src { font-size: 11.5px; color: var(--text-muted); margin-top: 3px; }
+  .meter { margin-top: 11px; }
+  .m-track { position: relative; height: 6px; border-radius: 3px; background: var(--seq-100); }
+  .m-fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 3px; background: var(--seq-450); }
+  .m-mark { position: absolute; top: -3px; bottom: -3px; width: 1px; background: var(--text-muted); }
+  .m-scale { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-top: 5px; font-variant-numeric: tabular-nums; }
+  .t-read { font-size: 12.5px; color: var(--text-secondary); margin-top: 9px; }
+
+  .calc { background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; margin-bottom: 26px; }
+  .calcrow { padding: 11px 0; border-top: 1px solid var(--grid); }
+  .calcrow:first-of-type { border-top: 0; padding-top: 2px; }
+  .calc-lab { font-size: 13px; color: var(--text-secondary); margin-bottom: 5px; }
+  .calc-eq { font-size: 15px; font-variant-numeric: tabular-nums; }
+  .calc-eq .op { color: var(--text-muted); margin: 0 5px; }
+  .calc-eq .res { font-weight: 650; }
+
+  .srcbox { background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px; padding: 16px 20px; font-size: 12.5px; color: var(--text-secondary); line-height: 1.9; }
+  .srcbox a { color: var(--text-secondary); text-decoration: underline; text-underline-offset: 2px; text-decoration-color: var(--axis); }
+  .srcbox a:hover { color: var(--text-primary); }
+
+  .nfa-chip { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; margin-left: 8px; padding: 5px 11px; border-radius: 999px; font-size: 13px; font-weight: 600; color: var(--critical); background: color-mix(in srgb, var(--critical) 12%, transparent); }
+  .legal { margin-top: 34px; background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px; border-left: 3px solid var(--warning); padding: 18px 22px; }
+  .legal h2 { font-size: 13px; font-weight: 650; margin: 0 0 10px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-primary); }
+  .legal p { margin: 0 0 10px; font-size: 12.5px; line-height: 1.65; color: var(--text-secondary); }
+  .legal p:last-child { margin-bottom: 0; }
+  .legal b { color: var(--text-primary); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div>
+      <h1 id="h-title"></h1>
+      <p class="stamp" id="h-stamp"></p>
+      <div class="regime"><span data-i18n="regimeLabel">Regime:</span> <b id="h-regime"></b></div><span class="nfa-chip" data-i18n="nfaChip">&#9888; Not financial advice</span>
+    </div>
+    <button class="themebtn" id="themebtn" type="button">Dark mode</button>
+  </header>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="tab-v" aria-selected="true" aria-controls="p-v" data-i18n="tabVerdicts">Verdicts</button>
+    <button class="tab" role="tab" id="tab-s" aria-selected="false" aria-controls="p-s" data-i18n="tabSignals">Signals</button>
+  </div>
+
+  <section class="panel" id="p-v" role="tabpanel" aria-labelledby="tab-v">
+    <div class="board" id="board"></div>
+    <div class="banner" id="banner"></div>
+
+    <p class="section-h" data-i18n="driversTitle">What is driving each call</p>
+    <p class="section-s" data-i18n="driversSub">Three factors per asset, usually two that confirm the verdict plus one offset that argues against it.</p>
+    <div class="cards" id="cards"></div>
+
+    <p class="section-h" data-i18n="gridTitle">Factor grid</p>
+    <p class="section-s" data-i18n="gridSub">One row per factor, one column per asset. A factor only scores where the framework says it drives that asset, so blanks are deliberate.</p>
+    <div class="matrix-wrap">
+      <table class="matrix" id="matrix"></table>
+      <div class="legendrow">
+        <span class="k"><span class="cell p">+</span> <span data-i18n="legendBull">bullish for that asset</span></span>
+        <span class="k"><span class="cell n">&minus;</span> <span data-i18n="legendBear">bearish for that asset</span></span>
+        <span class="k"><span class="cell z">&middot;</span> <span data-i18n="legendBlank">not a driver of that asset</span></span>
+      </div>
+    </div>
+
+    <div style="height:26px"></div>
+
+    <div class="chartcard" id="barcard">
+      <p class="chart-title" id="bar-title"></p>
+      <p class="chart-sub" id="bar-sub"></p>
+      <div id="barchart"></div>
+      <details class="tv"><summary data-i18n="tableView">Table view</summary><div id="bartable"></div></details>
+    </div>
+  </section>
+
+  <section class="panel" id="p-s" role="tabpanel" aria-labelledby="tab-s" hidden>
+    <p class="section-h" data-i18n="signalsTitle">Master signals</p>
+    <p class="section-s" data-i18n="signalsSub">The shared inputs, each shown against the band it has traded in. The tick on the track marks the level that flips the signal.</p>
+    <div class="tiles" id="tiles"></div>
+
+    <p class="section-h" data-i18n="calcsTitle">Calculation steps</p>
+    <p class="section-s" data-i18n="calcsSub">Every derived number on this page, worked out.</p>
+    <div class="calc" id="calc"></div>
+
+    <div class="chartcard" id="linecard">
+      <p class="chart-title" id="line-title"></p>
+      <p class="chart-sub" id="line-sub"></p>
+      <div id="linechart"></div>
+      <details class="tv"><summary data-i18n="tableView">Table view</summary><div id="linetable"></div></details>
+    </div>
+
+    <div style="height:26px"></div>
+
+    <p class="section-h" data-i18n="sourcesTitle">Sources</p>
+    <p class="section-s" data-i18n="sourcesSub">Primary series first, price and flow reads second.</p>
+    <div class="srcbox" id="srcbox"></div>
+  </section>
+
+  <section class="legal">
+    <h2 data-i18n="legalTitle">Not financial advice</h2>
+    <p data-i18n-html="legalOne"><b>This dashboard is personal research and general market commentary. It is not financial, investment, tax, or legal advice, and it is not a recommendation, offer, or solicitation to buy or sell any security, commodity, digital asset, or other instrument.</b> Nothing here is tailored to anyone's financial situation, objectives, risk tolerance, or time horizon.</p>
+    <p data-i18n-html="legalTwo">The author is not a registered investment adviser, broker dealer, or financial planner, and no adviser or fiduciary relationship is created by reading this. Anyone acting on this material does so entirely at their own risk and should consult a licensed professional first.</p>
+    <p data-i18n-html="legalThree"><b>This analysis is AI generated and may contain errors.</b> Figures are drawn from third party sources believed to be reliable but are not independently verified, are point in time as of the timestamp above, and go stale quickly. Verify every number against the linked primary source before relying on it.</p>
+    <p data-i18n-html="legalFour">The verdicts shown are a mechanical score of a fixed factor framework at one moment. They are not forecasts. Markets can move against every factor listed here. Past performance and current positioning do not predict future results, and all trading involves the risk of loss, up to and including total loss of capital. No representation or warranty, express or implied, is made as to accuracy or completeness, and no liability is accepted for any loss arising from use of this material.</p>
+  </section>
+</div>
+
+<div class="tip" id="tip"></div>
+
+<script id="payload" type="application/json">__DATA__</script>
+<script>
+const D = JSON.parse(document.getElementById("payload").textContent);
+const $ = (s) => document.querySelector(s);
+const NS = "http://www.w3.org/2000/svg";
+const el = (n, a) => { const e = document.createElementNS(NS, n); for (const k in (a||{})) e.setAttribute(k, a[k]); return e; };
+const LANG = D.language === "zh" ? "zh" : "en";
+const I18N = {
+  en: {
+    regimeLabel: "Regime:", nfaChip: "⚠ Not financial advice", tabVerdicts: "Verdicts", tabSignals: "Signals",
+    driversTitle: "What is driving each call", driversSub: "Three factors per asset, usually two that confirm the verdict plus one offset that argues against it.",
+    gridTitle: "Factor grid", gridSub: "One row per factor, one column per asset. A factor only scores where the framework says it drives that asset, so blanks are deliberate.",
+    legendBull: "bullish for that asset", legendBear: "bearish for that asset", legendBlank: "not a driver of that asset",
+    tableView: "Table view", signalsTitle: "Master signals", signalsSub: "The shared inputs, each shown against the band it has traded in. The tick on the track marks the level that flips the signal.",
+    calcsTitle: "Calculation steps", calcsSub: "Every derived number on this page, worked out.", sourcesTitle: "Sources", sourcesSub: "Primary series first, price and flow reads second.",
+    legalTitle: "Not financial advice",
+    legalOne: "<b>This dashboard is personal research and general market commentary. It is not financial, investment, tax, or legal advice, and it is not a recommendation, offer, or solicitation to buy or sell any security, commodity, digital asset, or other instrument.</b> Nothing here is tailored to anyone's financial situation, objectives, risk tolerance, or time horizon.",
+    legalTwo: "The author is not a registered investment adviser, broker dealer, or financial planner, and no adviser or fiduciary relationship is created by reading this. Anyone acting on this material does so entirely at their own risk and should consult a licensed professional first.",
+    legalThree: "<b>This analysis is AI generated and may contain errors.</b> Figures are drawn from third party sources believed to be reliable but are not independently verified, are point in time as of the timestamp above, and go stale quickly. Verify every number against the linked primary source before relying on it.",
+    legalFour: "The verdicts shown are a mechanical score of a fixed factor framework at one moment. They are not forecasts. Markets can move against every factor listed here. Past performance and current positioning do not predict future results, and all trading involves the risk of loss, up to and including total loss of capital. No representation or warranty, express or implied, is made as to accuracy or completeness, and no liability is accepted for any loss arising from use of this material.",
+    darkMode: "Dark mode", lightMode: "Light mode", netPrefix: "net", netSuffix: "on the factor grid",
+    factor: "Factor", currentReading: "Current reading", netScore: "Net score", netScoreRead: "bullish factors minus bearish", verdict: "Verdict", verdictRead: "one word, plus a qualifier where true",
+    bullish: "bullish", bearish: "bearish", notDriver: "not a driver", item: "Item", value: "Value", period: "Period"
+  },
+  zh: {
+    regimeLabel: "市场环境：", nfaChip: "⚠ 非投资建议", tabVerdicts: "资产结论", tabSignals: "宏观信号",
+    driversTitle: "各资产结论的核心驱动", driversSub: "每类资产列出三个关键因素，通常包括两个支持结论的因素和一个反向因素。",
+    gridTitle: "因子矩阵", gridSub: "每行代表一个宏观因子，每列代表一类资产。空白表示该因子不直接驱动该资产。",
+    legendBull: "利多该资产", legendBear: "利空该资产", legendBlank: "不直接驱动该资产",
+    tableView: "查看表格", signalsTitle: "核心宏观信号", signalsSub: "每项信号均对照近期交易区间展示，轨道刻度标出信号发生转变的关键水平。",
+    calcsTitle: "计算过程", calcsSub: "本页所有衍生数据的计算明细。", sourcesTitle: "数据来源", sourcesSub: "优先列出官方基础数据，其次列出价格、资金流与市场信息来源。",
+    legalTitle: "非投资建议",
+    legalOne: "<b>本仪表盘仅用于个人研究和一般市场评论，不构成金融、投资、税务或法律建议，也不构成买卖任何证券、商品、数字资产或其他工具的建议、要约或招揽。</b>其中内容并未针对任何人的财务状况、投资目标、风险承受能力或投资期限进行定制。",
+    legalTwo: "作者并非注册投资顾问、证券经纪商或理财规划师。阅读本内容不会建立任何顾问或受托关系。任何人依据本材料采取行动，均须自行承担全部风险，并应事先咨询持牌专业人士。",
+    legalThree: "<b>本分析由人工智能生成，可能包含错误。</b>数据来自被认为可靠的第三方来源，但未经独立核实，仅反映上方时间戳所示时点，并可能迅速失效。依赖任何数字前，请通过所链接的原始来源再次核验。",
+    legalFour: "页面结论只是固定因子框架在特定时点的机械评分，并非预测。市场走势可能与所有列示因子相反。历史表现和当前仓位不能预测未来结果，任何交易都存在亏损风险，包括损失全部本金。对于内容的准确性或完整性，不作任何明示或默示保证，也不对使用本材料造成的任何损失承担责任。",
+    darkMode: "深色模式", lightMode: "浅色模式", netPrefix: "因子净分", netSuffix: "",
+    factor: "宏观因子", currentReading: "当前读数", netScore: "净分", netScoreRead: "利多因子减去利空因子", verdict: "结论", verdictRead: "方向结论，必要时附带限定条件",
+    bullish: "利多", bearish: "利空", notDriver: "不直接驱动", item: "项目", value: "数值", period: "时期"
+  }
+};
+const tr = (key) => I18N[LANG][key];
+const verdictLabel = (a) => LANG === "zh" ? (a.dir === "bull" ? "看多 BULLISH" : "看跌 BEARISH") : a.verdict;
+const capLabel = (cap) => LANG === "zh" ? ({ capped: "受限 capped", bottoming: "筑底 bottoming" }[cap] || "") : cap;
+document.documentElement.lang = LANG === "zh" ? "zh-CN" : "en";
+document.querySelectorAll("[data-i18n]").forEach(n => { n.textContent = tr(n.dataset.i18n); });
+document.querySelectorAll("[data-i18n-html]").forEach(n => { n.innerHTML = tr(n.dataset.i18nHtml); });
+/* **x** becomes an emphasised number span */
+const md = (s) => String(s == null ? "" : s).replace(/\*\*(.+?)\*\*/g, '<span class="num">$1</span>');
+const sgn = (n, d = 1) => { const x = Number(n); return (x < 0 ? "−" : "+") + Math.abs(x).toFixed(d); };
+
+document.title = D.title;
+$("#h-title").textContent = D.title;
+$("#h-stamp").textContent = D.stamp;
+$("#h-regime").textContent = D.regime;
+$("#banner").innerHTML = md(D.banner);
+
+/* net scores derived from the factor grid, never hand typed */
+const NET = D.assets.map(() => 0);
+D.matrix.forEach(r => r.c.forEach((c, i) => { if (c === "p") NET[i]++; if (c === "n") NET[i]--; }));
+
+$("#board").innerHTML = D.assets.map((a, i) => `
+  <div class="bcard ${a.dir}">
+    <div class="b-top"><span class="b-emoji">${a.emoji}</span><span class="b-name">${a.name}</span></div>
+    <div class="b-verdict">
+      <span class="b-arrow" aria-hidden="true">${a.dir === "bull" ? "▲" : "▼"}</span>
+      <span class="b-word">${verdictLabel(a)}</span>
+    </div>
+    <div class="b-meta">
+      ${a.cap ? `<span class="b-qual">${capLabel(a.cap)}</span>` : ""}
+      <span class="b-score">${tr("netPrefix")} ${NET[i] > 0 ? "+" : ""}${NET[i]} ${tr("netSuffix")}</span>
+    </div>
+    <div class="b-line">${md(a.one)}</div>
+  </div>`).join("");
+
+$("#cards").innerHTML = D.assets.map(a => `
+  <div class="card">
+    <div class="card-head">
+      <span class="card-emoji">${a.emoji}</span>
+      <span class="card-name">${a.name}</span>
+      <span class="verdict ${a.dir}">${a.dir === "bull" ? "▲" : "▼"} ${verdictLabel(a)}</span>
+    </div>
+    <div class="qual">${a.qual}</div>
+    ${a.factors.map(f => `
+      <div class="factor">
+        <span class="fdot ${f.s}">${f.s === "up" ? "+" : "−"}</span>
+        <span><span class="fhead">${f.h}</span><span class="fbody">${md(f.b)}</span></span>
+      </div>`).join("")}
+  </div>`).join("");
+
+(function () {
+  const glyph = { p: "+", n: "−", z: "·" };
+  const title = { p: tr("bullish"), n: tr("bearish"), z: tr("notDriver") };
+  $("#matrix").innerHTML = `
+    <thead><tr>
+      <th class="rowh">${tr("factor")}</th><th class="readh">${tr("currentReading")}</th>
+      ${D.assets.map(a => `<th>${a.emoji} ${a.name}</th>`).join("")}
+    </tr></thead>
+    <tbody>
+      ${D.matrix.map(r => `<tr>
+        <td class="rowl">${r.f}</td><td class="readl">${r.r}</td>
+        ${r.c.map((c, i) => `<td><span class="cell ${c}" title="${LANG === "zh" ? `${r.f}，${title[c]}${D.assets[i].name}` : `${r.f}, ${title[c]} for ${D.assets[i].name}`}">${glyph[c]}</span></td>`).join("")}
+      </tr>`).join("")}
+      <tr class="tally">
+        <td class="rowl">${tr("netScore")}</td><td class="readl">${tr("netScoreRead")}</td>
+        ${NET.map(t => `<td>${t > 0 ? "+" : ""}${t}</td>`).join("")}
+      </tr>
+      <tr class="tally">
+        <td class="rowl">${tr("verdict")}</td><td class="readl">${tr("verdictRead")}</td>
+        ${D.assets.map(a => `<td><span class="verdict ${a.dir}" style="font-size:11px">${verdictLabel(a)}</span></td>`).join("")}
+      </tr>
+    </tbody>`;
+})();
+
+const tip = $("#tip");
+function showTip(e, label, value) {
+  tip.innerHTML = `<div class="tl">${label}</div><div class="tv">${value}</div>`;
+  tip.classList.add("on");
+  const pad = 14;
+  let x = e.clientX + pad, y = e.clientY + pad;
+  const r = tip.getBoundingClientRect();
+  if (x + r.width > innerWidth - 8) x = e.clientX - r.width - pad;
+  if (y + r.height > innerHeight - 8) y = e.clientY - r.height - pad;
+  tip.style.left = x + "px"; tip.style.top = y + "px";
+}
+const hideTip = () => tip.classList.remove("on");
+
+function sparkline(vals) {
+  const W = 74, H = 26, P = 3;
+  const mn = Math.min(...vals), mx = Math.max(...vals), rg = (mx - mn) || 1;
+  const x = i => P + (i / (vals.length - 1)) * (W - 2 * P);
+  const y = v => H - P - ((v - mn) / rg) * (H - 2 * P);
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, class: "t-spark", "aria-hidden": "true" });
+  svg.appendChild(el("path", {
+    d: vals.map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" "),
+    fill: "none", stroke: "var(--seq-250)", "stroke-width": "2",
+    "stroke-linecap": "round", "stroke-linejoin": "round"
+  }));
+  const last = vals.length - 1;
+  svg.appendChild(el("circle", { cx: x(last), cy: y(vals[last]), r: 3.6, fill: "var(--seq-450)", stroke: "var(--surface-1)", "stroke-width": "2" }));
+  return svg;
+}
+
+(function () {
+  const host = $("#tiles");
+  D.tiles.forEach(t => {
+    const pct = Math.max(0, Math.min(100, ((t.v - t.lo) / (t.hi - t.lo)) * 100));
+    const mpct = Math.max(0, Math.min(100, ((t.mark - t.lo) / (t.hi - t.lo)) * 100));
+    const fmt = n => n >= 1000 ? n.toLocaleString(LANG === "zh" ? "zh-CN" : "en-US") : String(n);
+    const d = document.createElement("div");
+    d.className = "tile";
+    d.innerHTML = `
+      <div class="t-lab">${t.lab}</div>
+      <div class="t-row"><div class="t-val">${t.val}</div><div class="sparkslot"></div></div>
+      <div class="t-src">${t.src}</div>
+      <div class="meter">
+        <div class="m-track"><div class="m-fill" style="width:${pct.toFixed(1)}%"></div><div class="m-mark" style="left:${mpct.toFixed(1)}%" title="${t.markLab}"></div></div>
+        <div class="m-scale"><span>${fmt(t.lo)}</span><span>${t.markLab}</span><span>${fmt(t.hi)}</span></div>
+      </div>
+      <div class="t-read">${t.read}</div>`;
+    if (t.spark && t.spark.length > 1) d.querySelector(".sparkslot").appendChild(sparkline(t.spark));
+    host.appendChild(d);
+  });
+})();
+
+$("#calc").innerHTML = D.calcs.map(c => `
+  <div class="calcrow">
+    <div class="calc-lab">${c.lab}</div>
+    <div class="calc-eq">${c.left}<span class="op">${c.op}</span>${c.right}<span class="op">=</span><span class="res">${c.res}</span></div>
+    <div class="calc-lab" style="margin:5px 0 0">${c.note}</div>
+  </div>`).join("");
+
+/* diverging bar chart */
+(function () {
+  const C = D.barChart;
+  if (!C || !C.data || !C.data.length) { $("#barcard").remove(); return; }
+  $("#bar-title").textContent = C.title;
+  $("#bar-sub").textContent = C.sub;
+
+  const W = 760, H = 250, ML = 84, MR = 26, MT = 14, MB = 34;
+  const pw = W - ML - MR, ph = H - MT - MB;
+  const mx = C.max, mn = C.min;
+  const y = v => MT + ((mx - v) / (mx - mn)) * ph;
+  const zero = y(0);
+  const band = pw / C.data.length;
+  const bw = Math.min(24, band - 12);
+
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": C.title + ". " + C.sub });
+
+  C.ticks.forEach(t => {
+    svg.appendChild(el("line", { x1: ML, x2: ML + pw, y1: y(t), y2: y(t), class: t === 0 ? "ax" : "gl" }));
+    const lb = el("text", { x: ML - 10, y: y(t) + 4, class: "tk", "text-anchor": "end" });
+    lb.textContent = t === 0 ? "0" : sgn(t, 0);
+    svg.appendChild(lb);
+  });
+
+  C.data.forEach((f, i) => {
+    const cx = ML + band * i + band / 2;
+    const neg = f.value < 0;
+    const hh = Math.max(Math.abs(y(f.value) - zero), 2);
+    const top = neg ? zero : y(f.value);
+    const r = 4;
+    const path = neg
+      ? `M${cx - bw / 2},${zero} L${cx + bw / 2},${zero} L${cx + bw / 2},${zero + hh - r} Q${cx + bw / 2},${zero + hh} ${cx + bw / 2 - r},${zero + hh} L${cx - bw / 2 + r},${zero + hh} Q${cx - bw / 2},${zero + hh} ${cx - bw / 2},${zero + hh - r} Z`
+      : `M${cx - bw / 2},${zero} L${cx - bw / 2},${top + r} Q${cx - bw / 2},${top} ${cx - bw / 2 + r},${top} L${cx + bw / 2 - r},${top} Q${cx + bw / 2},${top} ${cx + bw / 2},${top + r} L${cx + bw / 2},${zero} Z`;
+    svg.appendChild(el("path", { d: path, fill: neg ? "var(--neg)" : "var(--pos)" }));
+
+    const vl = el("text", { x: cx, y: neg ? zero + hh + 15 : top - 8, class: "dlab", "text-anchor": "middle" });
+    vl.textContent = sgn(f.value);
+    svg.appendChild(vl);
+
+    const dl = el("text", { x: cx, y: zero - 9, class: "tk", "text-anchor": "middle" });
+    dl.textContent = f.label;
+    svg.appendChild(dl);
+
+    const hit = el("rect", { x: cx - band / 2, y: MT, width: band, height: ph, class: "hit" });
+    hit.addEventListener("mousemove", e => showTip(e, f.label, (f.value < 0 ? "−" : "+") + (C.unit || "") + Math.abs(f.value).toFixed(1)));
+    hit.addEventListener("mouseleave", hideTip);
+    svg.appendChild(hit);
+  });
+
+  if (C.note) {
+    const note = el("text", { x: ML, y: H - 6, class: "refx" });
+    note.textContent = C.note;
+    svg.appendChild(note);
+  }
+
+  $("#barchart").appendChild(svg);
+  $("#bartable").innerHTML = `<table class="dt"><thead><tr><th>${C.itemHeader || tr("item")}</th><th>${C.valueHeader || tr("value")}</th></tr></thead><tbody>
+    ${C.data.map(f => `<tr><td>${f.label}</td><td>${sgn(f.value)}</td></tr>`).join("")}
+    ${C.extraRows ? C.extraRows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join("") : ""}
+    </tbody></table>`;
+})();
+
+/* line chart with a reference line */
+(function () {
+  const C = D.lineChart;
+  if (!C || !C.data || !C.data.length) { $("#linecard").remove(); return; }
+  $("#line-title").textContent = C.title;
+  $("#line-sub").textContent = C.sub;
+
+  const W = 760, H = 280, ML = 42, MR = 54, MT = 18, MB = 36;
+  const pw = W - ML - MR, ph = H - MT - MB;
+  const mn = C.min, mx = C.max;
+  const x = i => ML + (i / (C.data.length - 1)) * pw;
+  const y = v => MT + ((mx - v) / (mx - mn)) * ph;
+
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": C.title + ". " + C.sub });
+
+  C.ticks.forEach(t => {
+    svg.appendChild(el("line", { x1: ML, x2: ML + pw, y1: y(t), y2: y(t), class: t === C.refLine ? "refl" : "gl" }));
+    const lb = el("text", { x: ML - 9, y: y(t) + 4, class: "tk", "text-anchor": "end" });
+    lb.textContent = t;
+    svg.appendChild(lb);
+  });
+  if (C.refLabel) {
+    const rl = el("text", { x: ML + pw, y: y(C.refLine) - 7, class: "refx", "text-anchor": "end" });
+    rl.textContent = C.refLabel;
+    svg.appendChild(rl);
+  }
+
+  svg.appendChild(el("path", {
+    d: C.data.map((p, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(p.value).toFixed(1)}`).join(" "),
+    fill: "none", stroke: "var(--pos)", "stroke-width": "2", "stroke-linecap": "round", "stroke-linejoin": "round"
+  }));
+
+  C.data.forEach((p, i) => {
+    const last = i === C.data.length - 1;
+    svg.appendChild(el("circle", { cx: x(i), cy: y(p.value), r: last ? 5 : 4, fill: "var(--pos)", stroke: "var(--surface-1)", "stroke-width": "2" }));
+    if (i % 2 === 0 || last) {
+      const lb = el("text", { x: x(i), y: H - MB + 20, class: "tk", "text-anchor": "middle" });
+      lb.textContent = p.label;
+      svg.appendChild(lb);
+    }
+    const hit = el("circle", { cx: x(i), cy: y(p.value), r: 14, class: "hit" });
+    hit.addEventListener("mousemove", e => showTip(e, (C.seriesName || C.title) + ", " + p.label, p.value.toFixed(1)));
+    hit.addEventListener("mouseleave", hideTip);
+    svg.appendChild(hit);
+  });
+
+  const lastPt = C.data[C.data.length - 1];
+  const endl = el("text", { x: x(C.data.length - 1) + 11, y: y(lastPt.value) + 4, class: "dlab" });
+  endl.textContent = lastPt.value.toFixed(1);
+  svg.appendChild(endl);
+
+  $("#linechart").appendChild(svg);
+  $("#linetable").innerHTML = `<table class="dt"><thead><tr><th>${C.itemHeader || tr("period")}</th><th>${C.valueHeader || tr("value")}</th></tr></thead><tbody>
+    ${C.data.map(p => `<tr><td>${p.label}</td><td>${p.value.toFixed(1)}</td></tr>`).join("")}</tbody></table>`;
+})();
+
+$("#srcbox").innerHTML = D.sources.map(s => `<a href="${s[1]}" target="_blank" rel="noopener">${s[0]}</a>`).join(", ") + ".";
+
+const tabs = [["#tab-v", "#p-v"], ["#tab-s", "#p-s"]];
+tabs.forEach(([tb, pn]) => {
+  $(tb).addEventListener("click", () => {
+    tabs.forEach(([t, p]) => {
+      const on = t === tb;
+      $(t).setAttribute("aria-selected", String(on));
+      $(p).hidden = !on;
+    });
+    hideTip();
+  });
+});
+
+const tbtn = $("#themebtn");
+const setTheme = (m) => {
+  document.documentElement.setAttribute("data-theme", m);
+  tbtn.textContent = m === "dark" ? tr("lightMode") : tr("darkMode");
+};
+setTheme(matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+tbtn.addEventListener("click", () =>
+  setTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark"));
+</script>
+</body>
+</html>

@@ -13,6 +13,13 @@ Renders Turbo's financial independence (FI) dashboard: a progress card, an asset
 Plain-text-only variant of Turbo's short FOMC note — no visualization or rendered widgets, so it works inside Claude and on general gateways like Telegram and Slack. Leads with a **📈 POTENTIAL HIKE** or **📉 POTENTIAL CUT** verdict, two one-sentence reasons backed by official Fed sources, and exactly three institutions each tagged with their tendency and cited to the bank's own research site.
 - 🗣️ **Triggers:** "fomc plain", "fomc analysis", "analyze the last fomc", "fomc preview", or a named meeting date
 
+### 🌐 macro-dashboard
+The visual counterpart to `macro-impact`: builds a self-contained two-tab HTML dashboard answering whether the **current** macro environment is bullish or bearish for US stocks, US cash, gold, and crypto. Pulls live data fresh from official sources, scores every asset against a fixed factor matrix, computes net scores at render time so the verdict can never disagree with the matrix, and publishes a dated artifact each run.
+- 🗣️ **Triggers:** "macro dashboard", "宏观仪表盘", "宏观影响看板", "给我宏观分析", "宏观怎么看"
+- 🌏 A Chinese request renders the **entire page** in Chinese — copy, labels, tooltips, charts, and disclaimer — not just the analysis.
+- 🧪 `scripts/build.py` validates before writing (matrix width, cell values, source pairs, verdict/score agreement, the no-hyphen rule) and `scripts/verify.py` screenshots both tabs in both themes.
+- 🔎 Uses Exa for search and cross-checks X for crypto flows and sentiment.
+
 ### 📊 macro-impact
 Text-only read on whether the current macro environment is bullish or bearish for Turbo's four asset classes — crypto, US stocks, gold, and US cash. Ask about all four or just one. For each asset it returns a one-word verdict, three 📈/📉-tagged factors with a one-sentence reasoning each, and sources linked only at the end. Pulls live data fresh, prefers official/primary sources (Fed, FRED, Treasury, BLS, BEA, ISM, Cboe), and shows the real-yield math.
 - 🗣️ **Triggers:** "macro impact", "macro read", "is macro bullish or bearish", "how is macro affecting my assets", "macro on crypto / stocks / gold / cash"
