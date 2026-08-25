@@ -1,0 +1,18 @@
+{
+  "title": "Figure 1. Conceptual model",
+  "nodes": [
+    {"id": "iv",   "label": "Broker position (t1)", "col": 0, "row": 1, "kind": "construct"},
+    {"id": "med",  "label": "Perceived discretion", "col": 1, "row": 1, "kind": "construct", "mediator": true},
+    {"id": "dv",   "label": "Grant success (t2)",   "col": 2, "row": 1, "kind": "outcome"},
+    {"id": "mod",  "label": "Formal tie assignment","col": 1, "row": 2, "kind": "moderator"},
+    {"id": "ctrl", "label": "Controls: tenure, field, prior funding", "col": 1, "row": 0, "kind": "control"}
+  ],
+  "edges": [
+    {"from": "iv",   "to": "med", "label": "H1 (+)"},
+    {"from": "med",  "to": "dv",  "label": "H2 (+)"},
+    {"from": "iv",   "to": "dv",  "label": "H3 indirect", "style": "dashed", "curve": -0.38},
+    {"from": "mod",  "onto": ["iv", "med"], "label": "H4 (-)"},
+    {"from": "ctrl", "to": "dv",  "style": "dotted"}
+  ],
+  "note": "Figure 1. Solid arrows are hypothesized direct effects; the dashed arrow is the hypothesized indirect effect. The moderator terminates on the path it conditions. Control variables are modelled but not hypothesized."
+}

@@ -1,0 +1,27 @@
+{
+  "name": "academic-research",
+  "version": "1.3.2",
+  "description": "A social science research partner: learns your research preferences, hunts literature against them, teaches and drafts literature reviews, selects and justifies methods, runs the analysis in Stata or R with an operations manual and runnable templates, draws theory and causal diagrams, enforces APA/ASA/Chicago/GB-T 7714 formatting, and turns results into a defensible contribution. Fully bilingual: 中文提问, 中文回答. 社会科学研究助手, 支持文献检索, 文献综述, 研究方法, Stata 与 R 操作, 理论模型图, 参考文献格式与结论撰写.",
+  "author": {
+    "name": "SuperTurbo",
+    "url": "https://superturbo.com"
+  },
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "keywords": [
+    "social-science",
+    "literature-review",
+    "research-methods",
+    "causal-dag",
+    "apa",
+    "gb-t-7714",
+    "academic-writing",
+    "bilingual",
+    "chinese",
+    "stata",
+    "r",
+    "文献综述",
+    "研究方法",
+    "学位论文",
+    "参考文献格式"
+  ]
+}
