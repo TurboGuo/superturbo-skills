@@ -1,0 +1,9 @@
+{
+  "title": "Figure 2. Causal DAG for the effect of broker position on grant success",
+  "exposure": "X",
+  "outcome": "Y",
+  "unmeasured": ["U"],
+  "edges": [["Z","X"], ["Z","Y"], ["X","M"], ["M","Y"], ["X","C"], ["Y","C"], ["W","Y"]],
+  "positions": {"X": [0,0], "M": [1.6,0], "Y": [3.2,0], "Z": [1.6,1.3],
+                "C": [1.6,-1.3], "W": [3.2,1.3]}
+}

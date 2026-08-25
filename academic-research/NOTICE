@@ -1,0 +1,45 @@
+NOTICE
+======
+
+academic-research
+Copyright 2026 SuperTurbo (https://superturbo.com)
+Licensed under the PolyForm Noncommercial License 1.0.0. See LICENSE.
+
+Third-party code
+----------------
+None. Every file in this plugin is original work. No source file, template,
+prompt or script has been copied or adapted from another project.
+
+Prior art consulted
+-------------------
+The following MIT-licensed projects were read during design, for their
+structural approach only. No text or code was taken from any of them, and no
+attribution obligation arises. They are recorded here for transparency and
+because they are worth knowing about:
+
+  nealcaren/social-data-analysis           MIT, Copyright (c) 2025 Neal Caren
+  mronkko/claude-academic-research         MIT, Copyright (c) 2026 Mikko Ronkko
+  yha9806/academic-writing-toolkit         MIT, Copyright (c) 2026 Yu, Haorui
+  alisoroushmd/academic-research-mcp       MIT, Copyright (c) 2026 Ali Soroush
+
+Licence status of all four verified against the LICENSE file in each repository
+on 2026-08-25.
+
+Methodological sources
+----------------------
+The skills cite published methodological literature by author and year the way
+any research text does. Citing a method is not use of a licensed work: PRISMA,
+CONSORT, COREQ, STROBE and the Citation Style Language are open standards, and
+the books and articles named in the reference files are cited, never reproduced.
+
+Style specifications
+--------------------
+APA, ASA, APSA, Chicago, MLA and GB/T 7714-2015 are style specifications
+published by their respective bodies. The patterns in this plugin are
+descriptions of publicly documented formatting rules, illustrated with original
+examples. No style manual text is reproduced.
+
+Runtime dependencies
+--------------------
+The optional diagram scripts import matplotlib (PSF/BSD-compatible) and networkx
+(BSD 3-Clause). Neither is bundled; both are the user's own installation.

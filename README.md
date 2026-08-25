@@ -30,6 +30,13 @@ Builds a curated daily news brief across your chosen topics, renders an inline r
 - 🗣️ **Triggers:** "daily news", "today's news", "morning brief", "news brief", or a fresh morning chat with no specific task
 - 📦 Ships with a reader template and configurable source list.
 
+### 🎓 academic-research
+A social-science research partner shipped as a **plugin bundle of six skills** sharing one `.research/` workspace: `academic-master` (learns your research profile, then hunts literature scored against it), `literature-review-master`, `method-master` (design choice, power arithmetic, Stata/R operations manual), `theory-graph-master` (frameworks, causal DAGs, SEM paths, PRISMA), `format-master` (APA 7 / ASA / Chicago / MLA 9 / Harvard / AMA / IEEE / GB-T 7714-2015), and `insight-master` (result → finding → contribution, with a causal-language ladder that blocks overclaiming).
+- 🗣️ **Triggers:** "帮我找一下关于……的文献", "写文献综述", "该用什么研究方法", "画个理论模型图", "参考文献格式", "literature review", "which method should I use", "format my references"
+- 📦 Unlike the other entries this folder is a **plugin**, so it keeps its own `.claude-plugin/plugin.json` and internal `skills/` layout — install with `claude plugins add academic-research` or drop it into `.claude/plugins/`.
+- 🌏 Fully bilingual: Chinese questions trigger Chinese phrasing and answer in 学术语体, covering 述+评 review conventions, GB/T 7714-2015, and 学位论文 template rules.
+- ⚖️ PolyForm Noncommercial 1.0.0 — free for your own theses, papers, teaching and any university or public research body; see `academic-research/COMMERCIAL.md`.
+
 ### ✍️ turbo-x-writer
 Turns raw material (insights, transcripts, research findings, on-chain data, AI workflow notes) into a ready-to-post X package: one final post, the matching image-generation prompt in Turbo's editorial vintage style, a reply, and a pre-flight QC checklist against the algorithm landmines. Built on Turbo's locked 90-day beat of AI-enhanced crypto research and agent deployment.
 - 🗣️ **Triggers:** "write me an X post", "draft a tweet", "turn this into a thread", "Data Drop", "Crypto AI Stack"
