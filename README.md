@@ -37,6 +37,13 @@ A social-science research partner shipped as a **plugin bundle of six skills** s
 - 🌏 Fully bilingual: Chinese questions trigger Chinese phrasing and answer in 学术语体, covering 述+评 review conventions, GB/T 7714-2015, and 学位论文 template rules.
 - ⚖️ PolyForm Noncommercial 1.0.0 — free for your own theses, papers, teaching and any university or public research body; see `academic-research/COMMERCIAL.md`.
 
+### 🧭 ai-tool-guideline
+Builds a beginner pitfall manual for one named AI tool, delivered as a markdown file the client can keep. Asks which tool, which operating system, how far they want to get and where they are stuck, then researches the official site and docs plus the official community and public experience posts, and writes the traps nobody warns a first-time user about — as a staged journey with a concrete pass check before each next step. Every trap carries a source, an evidence level, the version it applies to and the date collected, so the manual can be re-dated instead of quietly going stale. Also appends a new trap to a manual the client already has.
+- 🗣️ **Triggers:** "help me get started with X", "what should I watch out for with X", "I keep getting stuck installing X", "写一份 X 的避坑手册", "X 有哪些坑", "小白怎么用 X"
+- 🌏 Writes the manual in whichever language the client asked in, while always researching Chinese *and* English sources.
+- 🚫 Not for choosing *which* tool to use (that's `ai-tool-search`) or vetting a third-party skill or connector before install (that's `install-safety-check`).
+- ⚖️ PolyForm Noncommercial 1.0.0 — free for personal and non-commercial use; see `ai-tool-guideline/COMMERCIAL.md`.
+
 ### ✍️ turbo-x-writer
 Turns raw material (insights, transcripts, research findings, on-chain data, AI workflow notes) into a ready-to-post X package: one final post, the matching image-generation prompt in Turbo's editorial vintage style, a reply, and a pre-flight QC checklist against the algorithm landmines. Built on Turbo's locked 90-day beat of AI-enhanced crypto research and agent deployment.
 - 🗣️ **Triggers:** "write me an X post", "draft a tweet", "turn this into a thread", "Data Drop", "Crypto AI Stack"
