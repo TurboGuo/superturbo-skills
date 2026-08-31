@@ -1,0 +1,22 @@
+{
+  "name": "toolfit-recruiter-hr",
+  "version": "1.0.0",
+  "description": "Recruiter and HR stack: 3 skills for job descriptions, interview kits and offer letters.",
+  "skills": "./skills/",
+  "author": {
+    "name": "SuperTurbo",
+    "email": "aisuperturbo@gmail.com",
+    "url": "https://superturbo.app"
+  },
+  "homepage": "https://superturbo.app",
+  "interface": {
+    "displayName": "Toolfit: Recruiter / HR",
+    "shortDescription": "A tested Recruiter and HR workflow stack",
+    "longDescription": "Three selected skills covering job descriptions, structured interview kits and offer letters, with setup guides for the four tools an HR team of one actually needs.",
+    "developerName": "SuperTurbo",
+    "category": "Productivity",
+    "defaultPrompt": "Use my Toolfit Recruiter / HR skills to help with the current task.",
+    "websiteURL": "https://superturbo.app",
+    "brandColor": "#0f9f67"
+  }
+}

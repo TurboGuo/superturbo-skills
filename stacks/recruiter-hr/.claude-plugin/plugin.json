@@ -1,0 +1,13 @@
+{
+  "name": "toolfit-recruiter-hr",
+  "version": "1.0.0",
+  "description": "Recruiter and HR stack: 3 skills for job descriptions, interview kits and offer letters, plus the Deel and Calendly connectors.",
+  "author": {
+    "name": "SuperTurbo",
+    "email": "aisuperturbo@gmail.com",
+    "url": "https://superturbo.app"
+  },
+  "homepage": "https://superturbo.app",
+  "license": "MIT",
+  "keywords": ["recruiting", "hr", "hiring", "interview", "offer-letter"]
+}

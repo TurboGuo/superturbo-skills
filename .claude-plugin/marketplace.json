@@ -1,0 +1,22 @@
+{
+  "name": "toolfit",
+  "owner": {
+    "name": "SuperTurbo",
+    "email": "aisuperturbo@gmail.com",
+    "url": "https://superturbo.app"
+  },
+  "metadata": {
+    "description": "Role stacks from Toolfit. Each stack is a tested set of skills plus the connectors that role actually needs.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "toolfit-recruiter-hr",
+      "source": "./stacks/recruiter-hr",
+      "description": "Recruiter and HR stack: job descriptions, structured interview kits, offer letters, plus Deel and Calendly connectors.",
+      "category": "productivity",
+      "keywords": ["recruiting", "hr", "hiring"],
+      "homepage": "https://superturbo.app"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "deel": {
+    "type": "http",
+    "url": "https://api.letsdeel.com/mcp"
+  },
+  "calendly": {
+    "type": "http",
+    "url": "https://mcp.calendly.com"
+  }
+}
