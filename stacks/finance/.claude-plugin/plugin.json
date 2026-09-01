@@ -1,0 +1,13 @@
+{
+  "name": "toolfit-finance",
+  "version": "1.0.0",
+  "description": "Finance stack: an accounts receivable and collections desk where every figure is computed by a bundled script, plus the Stripe, Mercury and Ramp connectors.",
+  "author": {
+    "name": "SuperTurbo",
+    "email": "aisuperturbo@gmail.com",
+    "url": "https://superturbo.app"
+  },
+  "homepage": "https://superturbo.app",
+  "license": "MIT",
+  "keywords": ["finance", "accounts-receivable", "collections", "dso", "bookkeeping"]
+}

@@ -1,0 +1,14 @@
+{
+  "stripe": {
+    "type": "http",
+    "url": "https://mcp.stripe.com"
+  },
+  "mercury": {
+    "type": "http",
+    "url": "https://mcp.mercury.com/mcp"
+  },
+  "ramp": {
+    "type": "http",
+    "url": "https://mcp.ramp.com/mcp"
+  }
+}

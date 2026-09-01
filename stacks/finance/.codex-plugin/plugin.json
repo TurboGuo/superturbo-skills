@@ -1,0 +1,22 @@
+{
+  "name": "toolfit-finance",
+  "version": "1.0.0",
+  "description": "Finance stack: an accounts receivable and collections desk where every figure is computed by a bundled script.",
+  "skills": "./skills/",
+  "author": {
+    "name": "SuperTurbo",
+    "email": "aisuperturbo@gmail.com",
+    "url": "https://superturbo.app"
+  },
+  "homepage": "https://superturbo.app",
+  "interface": {
+    "displayName": "Toolfit: Finance",
+    "shortDescription": "AR and collections, with the maths done by a script",
+    "longDescription": "Turns a QuickBooks, Xero or CSV invoice ledger into aged receivables that cross foot, DSO with a reliability check, a ranked call sheet and chase briefs. Every figure is computed by a bundled Python script rather than by the model.",
+    "developerName": "SuperTurbo",
+    "category": "Productivity",
+    "defaultPrompt": "Use my Toolfit Finance skills to work through my receivables.",
+    "websiteURL": "https://superturbo.app",
+    "brandColor": "#0f9f67"
+  }
+}

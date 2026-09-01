@@ -15,7 +15,23 @@
       "source": "./stacks/recruiter-hr",
       "description": "Recruiter and HR stack: job descriptions, structured interview kits, offer letters, plus Deel and Calendly connectors.",
       "category": "productivity",
-      "keywords": ["recruiting", "hr", "hiring"],
+      "keywords": [
+        "recruiting",
+        "hr",
+        "hiring"
+      ],
+      "homepage": "https://superturbo.app"
+    },
+    {
+      "name": "toolfit-finance",
+      "source": "./stacks/finance",
+      "description": "Finance stack: an accounts receivable and collections desk where every figure is computed by a bundled script, plus the Stripe, Mercury and Ramp connectors.",
+      "category": "productivity",
+      "keywords": [
+        "finance",
+        "accounts-receivable",
+        "collections"
+      ],
       "homepage": "https://superturbo.app"
     }
   ]
